@@ -77,7 +77,7 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/zhili_coco_people/zhili_coco_people_train_lmdb"
+train_data = "examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -253,7 +253,7 @@ name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
 pretrain_model = "models/ResNet/coco/refinedet_resnet18_80_1024x1024/coco_refinedet_resnet18_80_1024x1024_iter_45000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/zhili_coco_people/labelmap_coco.prototxt"
+label_map_file = "data/zhili_coco_neg/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
 num_classes = 2
