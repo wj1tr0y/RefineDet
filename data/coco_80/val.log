@@ -1,0 +1,8 @@
+I1116 18:11:19.244771 10693 convert_annoset.cpp:122] A total of 5000 images.
+I1116 18:11:19.269098 10693 db_lmdb.cpp:35] Opened lmdb /home/wangjilong/data/coco/lmdb/coco_80_val_lmdb
+I1116 18:12:39.142354 10693 convert_annoset.cpp:195] Processed 1000 files.
+I1116 18:13:48.710368 10693 convert_annoset.cpp:195] Processed 2000 files.
+I1116 18:14:56.669978 10693 convert_annoset.cpp:195] Processed 3000 files.
+I1116 18:16:01.829854 10693 convert_annoset.cpp:195] Processed 4000 files.
+I1116 18:17:05.438228 10693 convert_annoset.cpp:195] Processed 5000 files.
+/home/wangjilong/pedestrian/RefineDet/build/tools/convert_annoset --anno_type=detection --label_type=json --label_map_file=/home/wangjilong/pedestrian/RefineDet/data/coco_80/../../data/coco_80/labelmap_coco.prototxt --check_label=True --min_dim=0 --max_dim=0 --resize_height=0 --resize_width=0 --backend=lmdb --shuffle=False --check_size=False --encode_type=jpg --encoded=True --gray=False /home/wangjilong/data/coco/ /home/wangjilong/pedestrian/RefineDet/data/coco_80/../../data/coco_80/val.txt /home/wangjilong/data/coco/lmdb/coco_80_val_lmdb

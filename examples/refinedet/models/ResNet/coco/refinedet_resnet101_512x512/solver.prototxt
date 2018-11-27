@@ -1,0 +1,21 @@
+train_net: "models/ResNet/coco/refinedet_resnet101_512x512/train.prototxt"
+base_lr: 0.0010000000475
+display: 10
+max_iter: 540000
+lr_policy: "multistep"
+gamma: 0.10000000149
+momentum: 0.899999976158
+weight_decay: 0.000500000023749
+snapshot: 10000
+snapshot_prefix: "models/ResNet/coco/refinedet_resnet101_512x512/coco_refinedet_resnet101_512x512"
+solver_mode: GPU
+device_id: 0
+debug_info: false
+snapshot_after_train: true
+average_loss: 10
+stepvalue: 400000
+stepvalue: 480000
+stepvalue: 540000
+iter_size: 1
+type: "SGD"
+

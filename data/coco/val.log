@@ -1,0 +1,6 @@
+I1031 17:47:05.911255 44365 convert_annoset.cpp:122] A total of 2693 images.
+I1031 17:47:05.923996 44365 db_lmdb.cpp:35] Opened lmdb /home/wangjilong/data/coco/lmdb/coco_val_lmdb
+I1031 17:48:22.630934 44365 convert_annoset.cpp:195] Processed 1000 files.
+I1031 17:49:27.897599 44365 convert_annoset.cpp:195] Processed 2000 files.
+I1031 17:50:09.553050 44365 convert_annoset.cpp:201] Processed 2693 files.
+/home/wangjilong/pedestrian/RefineDet/build/tools/convert_annoset --anno_type=detection --label_type=json --label_map_file=/home/wangjilong/pedestrian/RefineDet/data/coco/../../data/coco/labelmap_coco.prototxt --check_label=True --min_dim=0 --max_dim=0 --resize_height=0 --resize_width=0 --backend=lmdb --shuffle=False --check_size=False --encode_type=jpg --encoded=True --gray=False /home/wangjilong/data/coco/ /home/wangjilong/pedestrian/RefineDet/data/coco/../../data/coco/val.txt /home/wangjilong/data/coco/lmdb/coco_val_lmdb

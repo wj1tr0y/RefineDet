@@ -1,0 +1,16 @@
+# ignore all model files, job files and test files
+models/*
+jobs/*
+build
+test/*
+.build_release/*
+
+# ignore all pyc
+*.pyc
+
+# ignore all lib files which can be built by makefile
+*.so
+
+# nohub file
+*.out
+
