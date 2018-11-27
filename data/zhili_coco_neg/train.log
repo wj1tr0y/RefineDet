@@ -1,0 +1,118 @@
+I1127 15:07:32.618990 36677 convert_annoset.cpp:122] A total of 102566 images.
+I1127 15:07:32.627697 36677 db_lmdb.cpp:35] Opened lmdb /home/wangjilong/data/zhili_coco_neg/lmdb/zhili_coco_neg_train_lmdb
+I1127 15:08:51.133605 36677 convert_annoset.cpp:195] Processed 1000 files.
+I1127 15:10:11.102166 36677 convert_annoset.cpp:195] Processed 2000 files.
+I1127 15:11:31.940842 36677 convert_annoset.cpp:195] Processed 3000 files.
+I1127 15:12:53.527179 36677 convert_annoset.cpp:195] Processed 4000 files.
+I1127 15:14:14.053068 36677 convert_annoset.cpp:195] Processed 5000 files.
+I1127 15:15:33.332600 36677 convert_annoset.cpp:195] Processed 6000 files.
+I1127 15:16:48.853806 36677 convert_annoset.cpp:195] Processed 7000 files.
+I1127 15:18:05.697626 36677 convert_annoset.cpp:195] Processed 8000 files.
+I1127 15:19:22.403640 36677 convert_annoset.cpp:195] Processed 9000 files.
+W1127 15:19:58.196460 36677 io.cpp:444] /home/wangjilong/data/zhili_coco_neg/Annotations/130281199801130518_M_000_coatgo.json bounding box exceeds image boundary.
+I1127 15:20:38.197901 36677 convert_annoset.cpp:195] Processed 10000 files.
+I1127 15:21:54.736543 36677 convert_annoset.cpp:195] Processed 11000 files.
+I1127 15:23:12.903714 36677 convert_annoset.cpp:195] Processed 12000 files.
+I1127 15:24:26.688163 36677 convert_annoset.cpp:195] Processed 13000 files.
+I1127 15:25:43.924496 36677 convert_annoset.cpp:195] Processed 14000 files.
+I1127 15:27:06.957494 36677 convert_annoset.cpp:195] Processed 15000 files.
+I1127 15:28:22.351408 36677 convert_annoset.cpp:195] Processed 16000 files.
+I1127 15:29:38.364305 36677 convert_annoset.cpp:195] Processed 17000 files.
+I1127 15:30:55.948808 36677 convert_annoset.cpp:195] Processed 18000 files.
+I1127 15:32:10.895810 36677 convert_annoset.cpp:195] Processed 19000 files.
+I1127 15:33:25.546587 36677 convert_annoset.cpp:195] Processed 20000 files.
+W1127 15:33:26.873723 36677 io.cpp:444] /home/wangjilong/data/zhili_coco_neg/Annotations/130426199708142318_M_000_coatgo.json bounding box exceeds image boundary.
+I1127 15:34:40.264191 36677 convert_annoset.cpp:195] Processed 21000 files.
+I1127 15:35:56.801271 36677 convert_annoset.cpp:195] Processed 22000 files.
+I1127 15:37:13.910418 36677 convert_annoset.cpp:195] Processed 23000 files.
+I1127 15:38:28.544113 36677 convert_annoset.cpp:195] Processed 24000 files.
+I1127 15:39:45.163411 36677 convert_annoset.cpp:195] Processed 25000 files.
+I1127 15:41:01.825455 36677 convert_annoset.cpp:195] Processed 26000 files.
+W1127 15:41:43.950577 36677 io.cpp:444] /home/wangjilong/data/zhili_coco_neg/Annotations/130524199804014511_M_000_shirtgo.json bounding box exceeds image boundary.
+I1127 15:42:17.057052 36677 convert_annoset.cpp:195] Processed 27000 files.
+I1127 15:43:32.779418 36677 convert_annoset.cpp:195] Processed 28000 files.
+I1127 15:44:46.957180 36677 convert_annoset.cpp:195] Processed 29000 files.
+I1127 15:46:04.375944 36677 convert_annoset.cpp:195] Processed 30000 files.
+I1127 15:47:20.237442 36677 convert_annoset.cpp:195] Processed 31000 files.
+W1127 15:47:40.208874 36677 io.cpp:450] /home/wangjilong/data/zhili_coco_neg/Annotations/04_009.json bounding box irregular.
+I1127 15:48:37.381367 36677 convert_annoset.cpp:195] Processed 32000 files.
+I1127 15:49:54.302562 36677 convert_annoset.cpp:195] Processed 33000 files.
+I1127 15:51:11.590893 36677 convert_annoset.cpp:195] Processed 34000 files.
+I1127 15:52:26.344281 36677 convert_annoset.cpp:195] Processed 35000 files.
+I1127 15:53:42.714285 36677 convert_annoset.cpp:195] Processed 36000 files.
+I1127 15:54:57.936144 36677 convert_annoset.cpp:195] Processed 37000 files.
+I1127 15:56:14.209661 36677 convert_annoset.cpp:195] Processed 38000 files.
+I1127 15:57:29.565115 36677 convert_annoset.cpp:195] Processed 39000 files.
+I1127 15:58:45.818915 36677 convert_annoset.cpp:195] Processed 40000 files.
+I1127 16:00:01.147899 36677 convert_annoset.cpp:195] Processed 41000 files.
+E1127 16:00:53.174929 36677 io.cpp:90] Could not open or find file /home/wangjilong/data/zhili_coco_neg/ImageSet/na.jpg
+W1127 16:00:53.175398 36677 convert_annoset.cpp:170] Failed to read ImageSet/na.jpg
+I1127 16:01:16.624950 36677 convert_annoset.cpp:195] Processed 42000 files.
+I1127 16:02:30.756381 36677 convert_annoset.cpp:195] Processed 43000 files.
+I1127 16:03:45.980351 36677 convert_annoset.cpp:195] Processed 44000 files.
+I1127 16:05:00.293629 36677 convert_annoset.cpp:195] Processed 45000 files.
+I1127 16:06:16.646436 36677 convert_annoset.cpp:195] Processed 46000 files.
+I1127 16:07:32.350461 36677 convert_annoset.cpp:195] Processed 47000 files.
+I1127 16:08:49.431946 36677 convert_annoset.cpp:195] Processed 48000 files.
+I1127 16:10:07.540722 36677 convert_annoset.cpp:195] Processed 49000 files.
+I1127 16:11:28.398025 36677 convert_annoset.cpp:195] Processed 50000 files.
+I1127 16:12:47.264299 36677 convert_annoset.cpp:195] Processed 51000 files.
+I1127 16:14:04.507714 36677 convert_annoset.cpp:195] Processed 52000 files.
+I1127 16:15:21.427073 36677 convert_annoset.cpp:195] Processed 53000 files.
+I1127 16:16:38.122993 36677 convert_annoset.cpp:195] Processed 54000 files.
+I1127 16:17:55.708917 36677 convert_annoset.cpp:195] Processed 55000 files.
+I1127 16:19:13.254706 36677 convert_annoset.cpp:195] Processed 56000 files.
+I1127 16:20:30.574061 36677 convert_annoset.cpp:195] Processed 57000 files.
+I1127 16:21:48.510498 36677 convert_annoset.cpp:195] Processed 58000 files.
+I1127 16:23:08.491729 36677 convert_annoset.cpp:195] Processed 59000 files.
+I1127 16:24:26.881150 36677 convert_annoset.cpp:195] Processed 60000 files.
+I1127 16:25:49.010121 36677 convert_annoset.cpp:195] Processed 61000 files.
+I1127 16:27:12.974261 36677 convert_annoset.cpp:195] Processed 62000 files.
+I1127 16:28:32.582235 36677 convert_annoset.cpp:195] Processed 63000 files.
+I1127 16:29:47.932092 36677 convert_annoset.cpp:195] Processed 64000 files.
+W1127 16:30:17.642840 36677 io.cpp:377] /home/wangjilong/data/zhili_coco_neg/Annotations/body_jxd_170417_313.json inconsistent image height.
+W1127 16:30:17.642900 36677 io.cpp:379] /home/wangjilong/data/zhili_coco_neg/Annotations/body_jxd_170417_313.json inconsistent image width.
+E1127 16:30:48.184427 36677 io.cpp:90] Could not open or find file /home/wangjilong/data/zhili_coco_neg/ImageSet/trainAn.jpg
+W1127 16:30:48.184806 36677 convert_annoset.cpp:170] Failed to read ImageSet/trainAn.jpg
+I1127 16:31:01.613369 36677 convert_annoset.cpp:195] Processed 65000 files.
+I1127 16:32:12.381175 36677 convert_annoset.cpp:195] Processed 66000 files.
+I1127 16:33:19.902204 36677 convert_annoset.cpp:195] Processed 67000 files.
+I1127 16:34:25.497512 36677 convert_annoset.cpp:195] Processed 68000 files.
+I1127 16:35:32.481173 36677 convert_annoset.cpp:195] Processed 69000 files.
+I1127 16:36:42.745064 36677 convert_annoset.cpp:195] Processed 70000 files.
+I1127 16:37:52.035414 36677 convert_annoset.cpp:195] Processed 71000 files.
+I1127 16:39:04.196662 36677 convert_annoset.cpp:195] Processed 72000 files.
+I1127 16:40:20.125460 36677 convert_annoset.cpp:195] Processed 73000 files.
+I1127 16:41:34.917673 36677 convert_annoset.cpp:195] Processed 74000 files.
+I1127 16:42:50.555954 36677 convert_annoset.cpp:195] Processed 75000 files.
+I1127 16:44:10.179920 36677 convert_annoset.cpp:195] Processed 76000 files.
+I1127 16:45:29.716239 36677 convert_annoset.cpp:195] Processed 77000 files.
+I1127 16:46:49.048630 36677 convert_annoset.cpp:195] Processed 78000 files.
+I1127 16:48:07.755838 36677 convert_annoset.cpp:195] Processed 79000 files.
+I1127 16:49:23.812477 36677 convert_annoset.cpp:195] Processed 80000 files.
+I1127 16:50:38.738065 36677 convert_annoset.cpp:195] Processed 81000 files.
+I1127 16:51:55.663877 36677 convert_annoset.cpp:195] Processed 82000 files.
+I1127 16:53:14.414294 36677 convert_annoset.cpp:195] Processed 83000 files.
+I1127 16:54:33.921656 36677 convert_annoset.cpp:195] Processed 84000 files.
+W1127 16:55:18.428530 36677 io.cpp:444] /home/wangjilong/data/zhili_coco_neg/Annotations/C0708_MP43978.json bounding box exceeds image boundary.
+I1127 16:55:56.814240 36677 convert_annoset.cpp:195] Processed 85000 files.
+I1127 16:57:18.713865 36677 convert_annoset.cpp:195] Processed 86000 files.
+I1127 16:58:39.997251 36677 convert_annoset.cpp:195] Processed 87000 files.
+I1127 17:00:02.906213 36677 convert_annoset.cpp:195] Processed 88000 files.
+I1127 17:01:26.573338 36677 convert_annoset.cpp:195] Processed 89000 files.
+I1127 17:02:48.397187 36677 convert_annoset.cpp:195] Processed 90000 files.
+I1127 17:04:13.185065 36677 convert_annoset.cpp:195] Processed 91000 files.
+I1127 17:05:35.810218 36677 convert_annoset.cpp:195] Processed 92000 files.
+I1127 17:06:59.436782 36677 convert_annoset.cpp:195] Processed 93000 files.
+I1127 17:08:22.037557 36677 convert_annoset.cpp:195] Processed 94000 files.
+W1127 17:09:05.183238 36677 io.cpp:444] /home/wangjilong/data/zhili_coco_neg/Annotations/622424199509062839_M_000_coatreturn.json bounding box exceeds image boundary.
+I1127 17:09:46.436326 36677 convert_annoset.cpp:195] Processed 95000 files.
+I1127 17:11:09.303665 36677 convert_annoset.cpp:195] Processed 96000 files.
+I1127 17:12:33.149904 36677 convert_annoset.cpp:195] Processed 97000 files.
+I1127 17:13:58.843504 36677 convert_annoset.cpp:195] Processed 98000 files.
+I1127 17:15:24.056794 36677 convert_annoset.cpp:195] Processed 99000 files.
+I1127 17:16:48.720077 36677 convert_annoset.cpp:195] Processed 100000 files.
+I1127 17:18:12.025717 36677 convert_annoset.cpp:195] Processed 101000 files.
+I1127 17:19:37.095048 36677 convert_annoset.cpp:195] Processed 102000 files.
+I1127 17:20:23.326894 36677 convert_annoset.cpp:201] Processed 102564 files.
+/home/wangjilong/pedestrian/RefineDet/build/tools/convert_annoset --anno_type=detection --label_type=json --label_map_file=/home/wangjilong/pedestrian/RefineDet/data/zhili_coco_neg/../../data/zhili_coco_neg/labelmap_coco.prototxt --check_label=True --min_dim=0 --max_dim=0 --resize_height=0 --resize_width=0 --backend=lmdb --shuffle=False --check_size=False --encode_type=jpg --encoded=True --gray=False /home/wangjilong/data/zhili_coco_neg/ /home/wangjilong/pedestrian/RefineDet/data/zhili_coco_neg/../../data/zhili_coco_neg/train.txt /home/wangjilong/data/zhili_coco_neg/lmdb/zhili_coco_neg_train_lmdb
