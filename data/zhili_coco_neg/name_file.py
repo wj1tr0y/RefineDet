@@ -1,6 +1,6 @@
 import os
 HOMEDIR = os.path.expanduser("~")
-DATASETDIR = os.path.join(HOMEDIR, 'data/neg/')
+DATASETDIR = os.path.join(HOMEDIR, 'data/zhili_coco_neg/')
 
 im_names = os.listdir(os.path.join(DATASETDIR, 'Annotations'))
 im_names = [x[:-5] for x in im_names]
