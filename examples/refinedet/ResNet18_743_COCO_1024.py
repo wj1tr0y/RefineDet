@@ -251,7 +251,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # # Stores the test image names and sizes. Created by data/coco/create_list.sh
 # name_size_file = "data/coco/val2017_name_size.txt"
 # # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/models/refinedet_resnet18_743_iter_9000.caffemodel"
+pretrain_model = "models/ResNet/coco/models/coco_refinedet_resnet18_743_1024x1024_iter_9000.caffemodel"
 # # Stores LabelMapItem.
 # label_map_file = "data/coco/labelmap_coco.prototxt"
 name_size_file = ""
