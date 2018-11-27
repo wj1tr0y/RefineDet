@@ -1264,13 +1264,13 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         loc_layers.append(net[flatten_name])
 
         # Create confidence prediction layer.
-        name = "{}_mbox_conf_ft{}".format(from_layer, conf_postfix)
+        name = "{}_mbox_conf_80{}".format(from_layer, conf_postfix)
         num_conf_output = num_priors_per_location * num_classes
         ConvBNLayer(net, from_layer, name, use_bn=use_batchnorm, use_relu=False, lr_mult=lr_mult,
                     num_output=num_conf_output, kernel_size=kernel_size, pad=pad, stride=1, **bn_param)
-        permute_name = "{}_perm_ft".format(name)
+        permute_name = "{}_perm_80".format(name)
         net[permute_name] = L.Permute(net[name], order=[0, 2, 3, 1])
-        flatten_name = "{}_flat_ft".format(name)
+        flatten_name = "{}_flat_80".format(name)
         net[flatten_name] = L.Flatten(net[permute_name], axis=1)
         conf_layers.append(net[flatten_name])
 
@@ -1279,7 +1279,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
     name = '{}{}'.format(prefix, "_loc")
     net[name] = L.Concat(*loc_layers, axis=1)
     mbox_layers.append(net[name])
-    name = '{}{}'.format(prefix, "_conf_ft")
+    name = '{}{}'.format(prefix, "_conf_80")
     net[name] = L.Concat(*conf_layers, axis=1)
     mbox_layers.append(net[name])
 
