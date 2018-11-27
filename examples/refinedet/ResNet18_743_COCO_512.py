@@ -291,7 +291,7 @@ loss_param = {
 
 # parameters for generating priors.
 # minimum dimension of input image
-min_dim = 1024
+min_dim = 512
 # res3b_relu ==> 64 x 64
 # res4b_relu ==> 32 x 32
 # res5b_relu ==> 16 x 16
