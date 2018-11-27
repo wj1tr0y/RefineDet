@@ -251,7 +251,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # # Stores the test image names and sizes. Created by data/coco/create_list.sh
 # name_size_file = "data/coco/val2017_name_size.txt"
 # # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_743_1024x1024/coco_refinedet_resnet18_743_1024x1024_iter_1000.caffemodel"
+# pretrain_model = "models/ResNet/coco/refinedet_resnet18_743_1024x1024/coco_refinedet_resnet18_743_1024x1024_iter_1000.caffemodel"
 # # Stores LabelMapItem.
 # label_map_file = "data/coco/labelmap_coco.prototxt"
 name_size_file = ""
@@ -395,7 +395,7 @@ det_eval_param = {
 check_if_exist(train_data)
 # check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+# check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -548,7 +548,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
