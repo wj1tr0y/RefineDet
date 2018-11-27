@@ -545,7 +545,7 @@ for file in os.listdir(snapshot_dir):
     iter = int(basename.split("{}_iter_".format(model_name))[1])
     if iter > max_iter:
       max_iter = iter
-
+train_src_param = ""
 # train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
