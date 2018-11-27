@@ -77,7 +77,7 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/zhili/zhili_train_lmdb"
+train_data = "examples/zhili_neg/zhili_neg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -255,7 +255,7 @@ pretrain_model = "models/ResNet/coco/models/coco_refinedet_resnet18_743_1024x102
 # # Stores LabelMapItem.
 # label_map_file = "data/coco/labelmap_coco.prototxt"
 name_size_file = ""
-label_map_file = "data/zhili/labelmap_coco.prototxt"
+label_map_file = "data/zhili_neg/labelmap_coco.prototxt"
 # MultiBoxLoss parameters.
 num_classes = 2
 share_location = True
