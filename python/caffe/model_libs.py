@@ -444,51 +444,16 @@ def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     net.conv5_3 = L.Convolution(net.relu5_2, num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
     net.relu5_3 = L.ReLU(net.conv5_3, in_place=True)
 
-    if need_fc:
-        if dilated:
-            if nopool:
-                name = 'conv5_4'
-                net[name] = L.Convolution(net.relu5_3, num_output=128, pad=1, kernel_size=3, stride=1, **kwargs)
-            else:
-                name = 'pool5'
-                net[name] = L.Pooling(net.relu5_3, pool=P.Pooling.MAX, pad=1, kernel_size=3, stride=1)
-        else:
-            if nopool:
-                name = 'conv5_4'
-                net[name] = L.Convolution(net.relu5_3, num_output=128, pad=1, kernel_size=3, stride=2, **kwargs)
-            else:
-                name = 'pool5'
-                net[name] = L.Pooling(net.relu5_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    name = 'pool5'
+    net[name] = L.Pooling(net.relu5_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
-        if fully_conv:
-            if dilated:
-                if reduced:
-                    dilation = dilation * 6
-                    kernel_size = 3
-                    num_output = 128
-                else:
-                    dilation = dilation * 2
-                    kernel_size = 7
-                    num_output = 512
-            else:
-                if reduced:
-                    dilation = dilation * 3
-                    kernel_size = 3
-                    num_output = 128
-                else:
-                    kernel_size = 7
-                    num_output = 512
-            pad = int((kernel_size + (dilation - 1) * (kernel_size - 1)) - 1) / 2
-            net.fc6 = L.Convolution(net[name], num_output=num_output, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
 
-            net.relu6 = L.ReLU(net.fc6, in_place=True)
-            if dropout:
-                net.drop6 = L.Dropout(net.relu6, dropout_ratio=0.5, in_place=True)
-        else:
-            net.fc6 = L.InnerProduct(net.pool5, num_output=512)
-            net.relu6 = L.ReLU(net.fc6, in_place=True)
-            if dropout:
-                net.drop6 = L.Dropout(net.relu6, dropout_ratio=0.5, in_place=True)
+    net.conv6_1 = L.Convolution(net[name], num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
+    net.relu6_1 = L.ReLU(net.conv6_1, in_place=True)
+    net.conv6_2 = L.Convolution(net.relu5_1, num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
+    net.relu6_2 = L.ReLU(net.conv6_2, in_place=True)
+    net.conv6_3 = L.Convolution(net.relu6_2, num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
+    net.relu6_3 = L.ReLU(net.conv6_3, in_place=True)
 
 
     # Update freeze layers.
