@@ -291,15 +291,15 @@ loss_param = {
 # parameters for generating priors.
 # minimum dimension of input image
 min_dim = 1024
-# res3b_relu ==> 128 x 128
-# res4b_relu ==> 64 x 64
-# res5b_relu ==> 32 x 32
-# res5b_relu/conv1_2_relu ==> 16 x 16
+# res3b_relu ==> 64 x 64
+# res4b_relu ==> 32 x 32
+# res5b_relu ==> 16 x 16
+# res5b_relu/conv1_2_relu ==> 8 x 8
 arm_source_layers = ['res3b_relu', 'res4b_relu', 'res5b_relu', 'res6_relu']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
-steps = [8, 16, 32, 64]
+steps = [16, 32, 64, 128]
 aspect_ratios = [[2], [2], [2], [2]]
 # variance used to encode/decode prior bboxes.
 if code_type == P.PriorBox.CENTER_SIZE:
