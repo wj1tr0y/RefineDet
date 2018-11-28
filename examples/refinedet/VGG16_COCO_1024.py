@@ -316,7 +316,7 @@ loss_param = {
 # conv5_3 ==> 32 x 32
 # fc7 ==> 16 x 16
 # conv6_2 ==> 8 x 8
-arm_source_layers = ['conv3_3', 'conv4_3', 'fc6_3', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'fc6_3', 'conv6_2']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
@@ -487,7 +487,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 
 VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
-arm_source_layers = ['conv3_3', 'conv4_3', 'fc6_3', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'fc6_3', 'conv6_2']
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
 arm_source_layers.reverse()
 normalizations.reverse()
