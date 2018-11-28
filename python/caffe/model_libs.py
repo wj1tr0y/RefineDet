@@ -369,7 +369,7 @@ def ZFNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     return net
 
 
-def VGGLitBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
+def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
         dilated=False, nopool=False, dropout=True, freeze_layers=[], dilate_pool4=False):
     kwargs = {
             'param': [dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)],
