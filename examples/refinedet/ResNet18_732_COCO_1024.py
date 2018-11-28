@@ -21,32 +21,32 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     from_layer = last_layer
 
     # 512/64: 8 x 8
-    ResidualBlock(net, from_layer, '6', out2a=64, out2b=64, stride=2, use_branch1=True)
+    ResidualBlock(net, from_layer, '6', out2a=48, out2b=48, stride=2, use_branch1=True)
 
     arm_source_layers.reverse()
     num_p = 6
     for index, layer in enumerate(arm_source_layers):
         from_layer = layer
         out_layer = "TL{}_{}".format(num_p, 1)
-        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
         if num_p == 6:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
         else:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 64, 3, 1, 1)
 
             from_layer = "P{}".format(num_p+1)
             out_layer = "P{}-up".format(num_p+1)
-            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 2, 0, 2)
+            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 64, 2, 0, 2)
 
             from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
             out_layer = "Elt{}".format(num_p)
@@ -57,7 +57,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
         num_p = num_p - 1
 
     return net
@@ -77,7 +77,7 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/zhili_neg/zhili_neg_train_lmdb"
+train_data = "examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -225,7 +225,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet18_{}".format(resize)
+job_name = "refinedet_resnet18_732_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -249,11 +249,11 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 job_file = "{}/{}.sh".format(job_dir, model_name)
 
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
-name_size_file = "data/coco/val2017_name_size.txt"
+name_size_file = "data/zhili_coco_neg/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_80_1024x1024/coco_refinedet_resnet18_80_1024x1024_iter_45000.caffemodel"
+# pretrain_model = "models/ResNet/coco/refinedet_resnet18_80_1024x1024/coco_refinedet_resnet18_80_1024x1024_iter_45000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/zhili_neg/labelmap_coco.prototxt"
+label_map_file = "data/zhili_coco_neg/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
 num_classes = 2
@@ -297,7 +297,7 @@ min_dim = 1024
 # res5b_relu/conv1_2_relu ==> 16 x 16
 arm_source_layers = ['res3b_relu', 'res4b_relu', 'res5b_relu', 'res6_relu']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
-min_sizes = [32, 64, 128, 256]
+min_sizes = [64, 128, 256, 512]
 max_sizes = [[], [], [], []]
 steps = [8, 16, 32, 64]
 aspect_ratios = [[2], [2], [2], [2]]
@@ -316,8 +316,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 150 
-accum_batch_size = 150 
+batch_size = 60 
+accum_batch_size = 60 
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -394,7 +394,7 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+#check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -547,7 +547,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
