@@ -318,7 +318,7 @@ loss_param = {
 # conv6_2 ==> 8 x 8
 arm_source_layers = ['conv4_3', 'conv5_3', 'fc6_3', 'conv6_2']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
-min_sizes = [32, 64, 128, 256]
+min_sizes = [64, 128, 256, 512]
 max_sizes = [[], [], [], []]
 steps = [8, 16, 32, 64]
 aspect_ratios = [[2], [2], [2], [2]]
