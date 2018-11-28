@@ -316,7 +316,7 @@ loss_param = {
 # conv5_3 ==> 32 x 32
 # fc7 ==> 16 x 16
 # conv6_2 ==> 8 x 8
-arm_source_layers = ['conv4_3', 'conv5_3', 'fc7', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'fc6', 'conv6_2']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [64, 128, 256, 512]
 max_sizes = [[], [], [], []]
