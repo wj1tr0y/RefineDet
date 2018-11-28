@@ -29,7 +29,7 @@ def AddExtraLayers(net, use_batchnorm=True, arm_source_layers=[], normalizations
 
     arm_source_layers.reverse()
     normalizations.reverse()
-    num_p = 6
+    num_p = 7
     for index, layer in enumerate(arm_source_layers):
         out_layer = layer
         if normalizations:
@@ -43,7 +43,7 @@ def AddExtraLayers(net, use_batchnorm=True, arm_source_layers=[], normalizations
         out_layer = "TL{}_{}".format(num_p, 1)
         ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1, lr_mult=lr_mult)
 
-        if num_p == 6:
+        if num_p == 7:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1, lr_mult=lr_mult)
