@@ -428,7 +428,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
+VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
 arm_source_layers.reverse()
@@ -485,7 +485,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-VGGNetBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
+VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
 arm_source_layers = ['conv4_3', 'conv5_3', 'fc7', 'conv6_2']
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
