@@ -383,16 +383,24 @@ def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     net.conv1_2 = L.Convolution(net.relu1_1, num_output=32, pad=1, kernel_size=3, **kwargs)
     net.relu1_2 = L.ReLU(net.conv1_2, in_place=True)
 
-    name = 'pool1'
-    net.pool1 = L.Pooling(net.relu1_2, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    if nopool:
+        name = 'conv1_3'
+        net[name] = L.Convolution(net.relu1_2, num_output=32, pad=1, kernel_size=3, stride=2, **kwargs)
+    else:
+        name = 'pool1'
+        net.pool1 = L.Pooling(net.relu1_2, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     net.conv2_1 = L.Convolution(net[name], num_output=48, pad=1, kernel_size=3, **kwargs)
     net.relu2_1 = L.ReLU(net.conv2_1, in_place=True)
     net.conv2_2 = L.Convolution(net.relu2_1, num_output=48, pad=1, kernel_size=3, **kwargs)
     net.relu2_2 = L.ReLU(net.conv2_2, in_place=True)
 
-    name = 'pool2'
-    net[name] = L.Pooling(net.relu2_2, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    if nopool:
+        name = 'conv2_3'
+        net[name] = L.Convolution(net.relu2_2, num_output=48, pad=1, kernel_size=3, stride=2, **kwargs)
+    else:
+        name = 'pool2'
+        net[name] = L.Pooling(net.relu2_2, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     net.conv3_1 = L.Convolution(net[name], num_output=64, pad=1, kernel_size=3, **kwargs)
     net.relu3_1 = L.ReLU(net.conv3_1, in_place=True)
@@ -401,8 +409,12 @@ def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     net.conv3_3 = L.Convolution(net.relu3_2, num_output=64, pad=1, kernel_size=3, **kwargs)
     net.relu3_3 = L.ReLU(net.conv3_3, in_place=True)
 
-    name = 'pool3'
-    net[name] = L.Pooling(net.relu3_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    if nopool:
+        name = 'conv3_4'
+        net[name] = L.Convolution(net.relu3_3, num_output=64, pad=1, kernel_size=3, stride=2, **kwargs)
+    else:
+        name = 'pool3'
+        net[name] = L.Pooling(net.relu3_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     net.conv4_1 = L.Convolution(net[name], num_output=128, pad=1, kernel_size=3, **kwargs)
     net.relu4_1 = L.ReLU(net.conv4_1, in_place=True)
@@ -411,25 +423,36 @@ def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     net.conv4_3 = L.Convolution(net.relu4_2, num_output=128, pad=1, kernel_size=3, **kwargs)
     net.relu4_3 = L.ReLU(net.conv4_3, in_place=True)
 
+    if nopool:
+        name = 'conv4_4'
+        net[name] = L.Convolution(net.relu4_3, num_output=128, pad=1, kernel_size=3, stride=2, **kwargs)
+    else:
+        name = 'pool4'
+        if dilate_pool4:
+            net[name] = L.Pooling(net.relu4_3, pool=P.Pooling.MAX, kernel_size=3, stride=1, pad=1)
+            dilation = 2
+        else:
+            net[name] = L.Pooling(net.relu4_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+            dilation = 1
 
-    name = 'pool4'
-    net[name] = L.Pooling(net.relu4_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
-    net.conv5_1 = L.Convolution(net[name], num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    kernel_size = 3
+    pad = int((kernel_size + (dilation - 1) * (kernel_size - 1)) - 1) / 2
+    net.conv5_1 = L.Convolution(net[name], num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
     net.relu5_1 = L.ReLU(net.conv5_1, in_place=True)
-    net.conv5_2 = L.Convolution(net.relu5_1, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    net.conv5_2 = L.Convolution(net.relu5_1, num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
     net.relu5_2 = L.ReLU(net.conv5_2, in_place=True)
-    net.conv5_3 = L.Convolution(net.relu5_2, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    net.conv5_3 = L.Convolution(net.relu5_2, num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
     net.relu5_3 = L.ReLU(net.conv5_3, in_place=True)
 
     name = 'pool5'
     net[name] = L.Pooling(net.relu5_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
-    net.conv6_1 = L.Convolution(net[name], num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
-    net.relu6_1 = L.ReLU(net.conv6_1, in_place=True)
-    net.conv6_2 = L.Convolution(net.relu5_1, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
-    net.relu6_2 = L.ReLU(net.conv6_2, in_place=True)
-    net.conv6_3 = L.Convolution(net.relu6_2, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
-    net.relu6_3 = L.ReLU(net.conv6_3, in_place=True)
+    pad = int((kernel_size + (dilation - 1) * (kernel_size - 1)) - 1) / 2
+    net.fc6 = L.Convolution(net[name], num_output=128, pad=pad, kernel_size=kernel_size, dilation=dilation, **kwargs)
+
+    net.relu6 = L.ReLU(net.fc6, in_place=True)
+    if dropout:
+        net.drop6 = L.Dropout(net.relu6, dropout_ratio=0.5, in_place=True)
 
 
     # Update freeze layers.
