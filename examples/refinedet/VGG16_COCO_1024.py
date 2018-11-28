@@ -20,11 +20,11 @@ def AddExtraLayers(net, use_batchnorm=True, arm_source_layers=[], normalizations
     from_layer = net.keys()[-1]
 
     # 512/64: 8 x 8
-    out_layer = "conv6_1"
+    out_layer = "conv7_1"
     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 1, 0, 1, lr_mult=lr_mult)
 
     from_layer = out_layer
-    out_layer = "conv6_2"
+    out_layer = "conv7_2"
     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 2, lr_mult=lr_mult)
 
     arm_source_layers.reverse()
@@ -316,9 +316,9 @@ loss_param = {
 # conv5_3 ==> 32 x 32
 # fc7 ==> 16 x 16
 # conv6_2 ==> 8 x 8
-arm_source_layers = ['conv4_3', 'conv5_3', 'fc6', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'conv6_3', 'conv7_2']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
-min_sizes = [64, 128, 256, 512]
+min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
 steps = [8, 16, 32, 64]
 aspect_ratios = [[2], [2], [2], [2]]
@@ -487,7 +487,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 
 VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
-arm_source_layers = ['conv4_3', 'conv5_3', 'fc6', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'conv6_3', 'conv7_2']
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
 arm_source_layers.reverse()
 normalizations.reverse()
