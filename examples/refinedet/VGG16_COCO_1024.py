@@ -311,7 +311,7 @@ loss_param = {
 
 # parameters for generating priors.
 # minimum dimension of input image
-# min_dim = 512
+# min_dim = 1024
 # conv4_3 ==> 64 x 64
 # conv5_3 ==> 32 x 32
 # fc7 ==> 16 x 16
@@ -320,7 +320,7 @@ arm_source_layers = ['conv4_3', 'conv5_3', 'fc6_3', 'conv6_2']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [64, 128, 256, 512]
 max_sizes = [[], [], [], []]
-steps = [8, 16, 32, 64]
+steps = [16, 32, 64, 128]
 aspect_ratios = [[2], [2], [2], [2]]
 # L2 normalize conv4_3 and conv5_3.
 normalizations = [10, 8, -1, -1]
