@@ -487,7 +487,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 
 VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
-arm_source_layers = ['conv4_3', 'conv5_3', 'fc7', 'conv6_2']
+arm_source_layers = ['conv4_3', 'conv5_3', 'fc6', 'conv6_2']
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
 arm_source_layers.reverse()
 normalizations.reverse()
