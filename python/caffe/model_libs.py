@@ -422,6 +422,14 @@ def VGGLiteBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     name = 'pool5'
     net[name] = L.Pooling(net.relu5_3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
+
+    net.fc6_1 = L.Convolution(net[name], num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    net.relu6_1 = L.ReLU(net.fc6_1, in_place=True)
+    net.fc6_2 = L.Convolution(net.relu6_1, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    net.relu6_2 = L.ReLU(net.fc6_2, in_place=True)
+    net.fc6_3 = L.Convolution(net.relu6_2, num_output=128, pad=1, kernel_size=3, dilation=1, **kwargs)
+    net.relu6_3 = L.ReLU(net.fc6_3, in_place=True)
+
     # Update freeze layers.
     kwargs['param'] = [dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)]
     layers = net.keys()
