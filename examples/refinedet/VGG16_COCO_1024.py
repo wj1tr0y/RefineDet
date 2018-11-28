@@ -29,7 +29,7 @@ def AddExtraLayers(net, use_batchnorm=True, arm_source_layers=[], normalizations
 
     arm_source_layers.reverse()
     normalizations.reverse()
-    num_p = 7
+    num_p = 6
     for index, layer in enumerate(arm_source_layers):
         out_layer = layer
         if normalizations:
@@ -43,7 +43,7 @@ def AddExtraLayers(net, use_batchnorm=True, arm_source_layers=[], normalizations
         out_layer = "TL{}_{}".format(num_p, 1)
         ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1, lr_mult=lr_mult)
 
-        if num_p == 7:
+        if num_p == 6:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1, lr_mult=lr_mult)
@@ -316,8 +316,8 @@ loss_param = {
 # conv5_3 ==> 32 x 32
 # fc7 ==> 16 x 16
 # conv6_2 ==> 8 x 8
-arm_source_layers = ['conv4_3', 'conv5_3', 'conv6_3', 'conv7_2']
-odm_source_layers = ['P4', 'P5', 'P6', 'P7']
+arm_source_layers = ['conv3_3', 'conv4_3', 'conv5_3', 'conv7_2']
+odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
 steps = [8, 16, 32, 64]
@@ -487,7 +487,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
 
 VGGLiteBody(net, from_layer='data', fully_conv=True, reduced=True, dilated=False, dropout=False)
 
-arm_source_layers = ['conv4_3', 'conv5_3', 'conv6_3', 'conv7_2']
+arm_source_layers = ['conv3_3', 'conv4_3', 'conv5_3', 'conv7_2']
 AddExtraLayers(net, use_batchnorm, arm_source_layers, normalizations, lr_mult=lr_mult)
 arm_source_layers.reverse()
 normalizations.reverse()
