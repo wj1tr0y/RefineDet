@@ -78,7 +78,7 @@ if __name__ == '__main__':
     test_set = test_set.split(',')
     for i in test_set:
         print('Processing test/{}/:'.format(i))
-        img_dir = '/home/wangjilong/pedestrian/dataset/test/' + str(i)
+        img_dir = '../dataset/test/' + str(i)
         im_names = os.listdir(img_dir)
         im_names = [x for x in im_names if 'dets' not in x]
         total = len(im_names)
