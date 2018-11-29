@@ -373,7 +373,7 @@ det_out_param = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
-    'nms_param': {'nms_threshold': 0.7, 'top_k': 1000},
+    'nms_param': {'nms_threshold': 0.55, 'top_k': 1000},
     'keep_top_k': 500,
     'confidence_threshold': 0.01,
     'code_type': code_type,
