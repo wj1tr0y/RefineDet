@@ -28,6 +28,9 @@ if __name__ == '__main__':
         os.mkdir(frame_save_dir)
     
     cap = cv2.VideoCapture(video_name)
+    fps = cap.get(cv2.cv.CV_CAP_PROP_FPS)
+    size = (int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)),
+        int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)))
     frame_count = 1
     success = True
     while(success):
@@ -39,6 +42,7 @@ if __name__ == '__main__':
         else:
             print ''
     cap.release()
+
     if os.path.exists('result'):
         shutil.rmtree('result')
         os.mkdir('result')
@@ -50,7 +54,10 @@ if __name__ == '__main__':
     output = process.communicate()
     print(output)
 
-    zip = zipfile.ZipFile('result.zip', 'w')
-    for im_name in os.listdir('result'):
-        zip.write(os.path.join('result', im_name))
-    zip.close()
+    videoWriter = cv2.VideoWriter('result.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    frame_name = os.listdir('result')
+    frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
+    for i in frame_name:
+        frame = cv2.imread('result/' + i)
+        videoWriter.write(frame)
+    videoWriter.release()
