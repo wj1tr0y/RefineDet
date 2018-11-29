@@ -28,9 +28,9 @@ if __name__ == '__main__':
         os.mkdir(frame_save_dir)
     
     cap = cv2.VideoCapture(video_name)
-    fps = cap.get(cv2.cv.CV_CAP_PROP_FPS)
-    size = (int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)),
-        int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+        int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     frame_count = 1
     success = True
     while(success):
