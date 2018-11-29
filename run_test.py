@@ -66,7 +66,7 @@ if __name__ == '__main__':
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
-    img_resize = 512
+    img_resize = 1024
     net.blobs['data'].reshape(1, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
