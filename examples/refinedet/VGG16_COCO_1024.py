@@ -272,12 +272,12 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained model. We use the Fully convolutional reduced (atrous) VGGNet.
-# pretrain_model = "models/VGGNet/VGG_ILSVRC_16_layers_fc_reduced.caffemodel"
+pretrain_model = "models/VGGNet/coco/coco_refinedet_vgg16_1024x1024_iter_40000.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/coco/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
-num_classes = 81
+num_classes = 2
 share_location = True
 background_label_id = 0
 train_on_diff_gt = False
@@ -361,7 +361,7 @@ elif normalization_mode == P.Loss.FULL:
   base_lr *= 2000.
 
 # Evaluate on whole test set.
-num_test_image = 5000
+num_test_image = 2693
 test_batch_size = 1
 test_iter = num_test_image / test_batch_size
 
@@ -370,7 +370,7 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [280000, 360000, 400000],
+    'stepvalue': [50000, 150000, 400000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
@@ -417,7 +417,7 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-# check_if_exist(pretrain_model)
+check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -514,7 +514,7 @@ flatten_name = "{}_flatten".format(conf_name)
 net[flatten_name] = L.Flatten(net[softmax_name], axis=1)
 mbox_layers_out[3] = net[flatten_name]
 
-conf_name = "odm_conf_ft"
+conf_name = "odm_conf"
 reshape_name = "{}_reshape".format(conf_name)
 net[reshape_name] = L.Reshape(net[conf_name], shape=dict(dim=[0, -1, num_classes]))
 softmax_name = "{}_softmax".format(conf_name)
@@ -571,7 +571,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
