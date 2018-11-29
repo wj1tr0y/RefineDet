@@ -3,6 +3,7 @@ import argparse
 import os
 import shutil
 import subprocess
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
     parser.add_argument("video", 
@@ -24,19 +25,23 @@ if __name__ == '__main__':
         os.mkdir(frame_save_dir)
     else:
         os.mkdir(frame_save_dir)
-
+    
     cap = cv2.VideoCapture(video_name)
     frame_count = 1
     success = True
     while(success):
         success, frame = cap.read()
-        cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
-        frame_count += 1
-
+        if success:
+            print 'Reading frames: {}\r'.format(frame_count),
+            cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
+            frame_count += 1
+        else:
+            print ''
     cap.release()
 
-    cmd = "python run_test.py --gpuid {} --out-dir result --test-set videocap".format(args.gpuid)
+    print 'Detecting pedestrian.....'
+    cmd = "python run_test.py --gpuid {} --out-dir result --test-set videocap".format(args.gpus)
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-    output = process.communicate()[0]
+    output = process.communicate()
     print(output)
