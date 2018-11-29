@@ -352,7 +352,7 @@ solver_param = {
     'momentum': 0.9,
     'iter_size': iter_size,
     'max_iter': 150000,
-    'snapshot': 5000,
+    'snapshot': 1000,
     'display': 10,
     'average_loss': 10,
     'type': "SGD",
