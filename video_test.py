@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import zipfile
+import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     if not os.path.exists(video_name):
         print "{} doesn't exist.".format(video_name)
 
-    frame_save_dir = '../dataset/test/videocap'
+    frame_save_dir = '../dataset/test/videocap'+ str(int(time.time()))
     if os.path.exists(frame_save_dir):
         shutil.rmtree(frame_save_dir)
         os.mkdir(frame_save_dir)
@@ -61,3 +62,6 @@ if __name__ == '__main__':
         frame = cv2.imread('result/' + i)
         videoWriter.write(frame)
     videoWriter.release()
+
+
+    shutil.rmtree(frame_save_dir)
