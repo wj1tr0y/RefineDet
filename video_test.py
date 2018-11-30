@@ -44,22 +44,22 @@ if __name__ == '__main__':
             print ''
     cap.release()
 
-    if os.path.exists('result'):
-        shutil.rmtree('result')
-        os.mkdir('result')
+
+    out_dir = 'result' + str(int(time.time()))
+    os.mkdir(out_dir)
 
     print 'Detecting pedestrian.....'
-    cmd = "python run_test.py --gpuid {} --out-dir result --test-set {}".format(args.gpuid, frame_save_dir.split('/')[-1])
+    cmd = "python run_test.py --gpuid {} --out-dir {} --test-set {}".format(args.gpuid, out_dir, frame_save_dir.split('/')[-1])
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output = process.communicate()
     print(output)
 
-    videoWriter = cv2.VideoWriter('result.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
-    frame_name = os.listdir('result')
+    videoWriter = cv2.VideoWriter(out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    frame_name = os.listdir(out_dir)
     frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
     for i in frame_name:
-        frame = cv2.imread('result/' + i)
+        frame = cv2.imread(os.path.join(out_dir, i))
         videoWriter.write(frame)
     videoWriter.release()
 
