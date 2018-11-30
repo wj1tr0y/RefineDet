@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import zipfile
+import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
