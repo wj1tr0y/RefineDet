@@ -61,8 +61,8 @@ if __name__ == '__main__':
         os.mkdir(save_dir)
 
     # load model
-    model_def = 'models/ResNet/coco/refinedet_resnet101_512x512/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet101_512x512/coco_refinedet_resnet101_512x512_iter_78115.caffemodel'
+    model_def = 'models/VGGNet/coco/refinedet_vgg16_1024x1024/deploy.prototxt'
+    model_weights = 'models/VGGNet/coco/refinedet_vgg16_1024x1024/coco_refinedet_vgg16_1024x1024_iter_29900.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     test_set = test_set.split(',')
     for i in test_set:
         print('Processing test/{}/:'.format(i))
-        img_dir = '/home/wangjilong/pedestrian/dataset/test/' + str(i)
+        img_dir = '../dataset/test/' + str(i)
         im_names = os.listdir(img_dir)
         im_names = [x for x in im_names if 'dets' not in x]
         total = len(im_names)
