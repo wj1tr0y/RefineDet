@@ -49,7 +49,7 @@ if __name__ == '__main__':
         os.mkdir('result')
 
     print 'Detecting pedestrian.....'
-    cmd = "python run_test.py --gpuid {} --out-dir result --test-set {}".format(args.gpuid, frame_save_dir.split('/')[:-1])
+    cmd = "python run_test.py --gpuid {} --out-dir result --test-set {}".format(args.gpuid, frame_save_dir.split('/')[-1])
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output = process.communicate()
