@@ -4,7 +4,7 @@ jobs/*
 build
 test/*
 .build_release/*
-
+result*
 # ignore all pyc
 *.pyc
 
@@ -16,3 +16,9 @@ test/*
 
 # VScode
 .vscode/*
+
+# video file
+
+*.avi
+*.mp4
+*.zip
