@@ -5,6 +5,7 @@ build
 test/*
 .build_release/*
 result*
+
 # ignore all pyc
 *.pyc
 
@@ -13,7 +14,7 @@ result*
 
 # nohub file
 *.out
-
+*.log
 # VScode
 .vscode/*
 
