@@ -39,7 +39,8 @@ if __name__ == '__main__':
             success, frame = cap.read()
             if success:
                 print 'Reading frames: {}\r'.format(frame_count),
-                cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
+                if frame_count % 10 == 0:
+                    cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
                 frame_count += 1
             else:
                 print ''
