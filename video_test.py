@@ -21,28 +21,24 @@ if __name__ == '__main__':
     if not os.path.exists(video_name):
         print "{} doesn't exist.".format(video_name)
 
-    frame_save_dir = '../dataset/test/videocap'+ str(int(time.time()))
-    if os.path.exists(frame_save_dir):
-        shutil.rmtree(frame_save_dir)
+    frame_save_dir = '../dataset/test/videoframe-'+ video_name[:video_name.index('.')]
+    if not os.path.exists(frame_save_dir):
         os.mkdir(frame_save_dir)
-    else:
-        os.mkdir(frame_save_dir)
-    
-    cap = cv2.VideoCapture(video_name)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-        int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    frame_count = 1
-    success = True
-    while(success):
-        success, frame = cap.read()
-        if success:
-            print 'Reading frames: {}\r'.format(frame_count),
-            cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
-            frame_count += 1
-        else:
-            print ''
-    cap.release()
+        cap = cv2.VideoCapture(video_name)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+            int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        frame_count = 1
+        success = True
+        while(success):
+            success, frame = cap.read()
+            if success:
+                print 'Reading frames: {}\r'.format(frame_count),
+                cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
+                frame_count += 1
+            else:
+                print ''
+        cap.release()
 
 
     out_dir = 'result' + str(int(time.time()))
@@ -55,7 +51,7 @@ if __name__ == '__main__':
     output = process.communicate()
     print(output)
 
-    videoWriter = cv2.VideoWriter(video_name[:-4] + out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    videoWriter = cv2.VideoWriter(video_name[:video_name.index('.')] + out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
     frame_name = os.listdir(out_dir)
     frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
     for i in frame_name:
