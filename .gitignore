@@ -2,6 +2,7 @@
 models/*
 jobs/*
 test/*
+*result*
 
 # ignore all pyc
 *.pyc
@@ -12,13 +13,10 @@ test/*
 # nohub file
 *.out
 *.log
+
 # VScode
 .vscode/*
 
 # Video files
 *.mp4
 *.avi
-
-# Test files
-result*
-
