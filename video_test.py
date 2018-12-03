@@ -55,7 +55,7 @@ if __name__ == '__main__':
     output = process.communicate()
     print(output)
 
-    videoWriter = cv2.VideoWriter(out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    videoWriter = cv2.VideoWriter(video_name[:-4] + out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
     frame_name = os.listdir(out_dir)
     frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
     for i in frame_name:
