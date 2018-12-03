@@ -49,9 +49,11 @@ if __name__ == '__main__':
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output = process.communicate()
-    print(output)
 
-    videoWriter = cv2.VideoWriter(video_name[:video_name.index('.')] + out_dir + '.avi', cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    print('Detection done. Now render results to video file.')
+
+    out_video_name = video_name[:video_name.index('.')] + out_dir + '.avi'
+    videoWriter = cv2.VideoWriter(out_video_name, cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
     frame_name = os.listdir(out_dir)
     frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
     for i in frame_name:
@@ -62,3 +64,11 @@ if __name__ == '__main__':
 
     shutil.rmtree(frame_save_dir)
     shutil.rmtree(out_dir)
+
+    cmd = "ffmpeg -threads 12 -y -i {} -strict experimental {}".format(out_video_name, out_video_name[:-4]+'.mp4')
+    print(cmd)
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    output = process.communicate()
+    print(output)
+
+    print('Done. Result was stored in {}'.format(out_video_name[:-4]+'.mp4'))
