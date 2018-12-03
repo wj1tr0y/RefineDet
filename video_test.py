@@ -23,6 +23,10 @@ if __name__ == '__main__':
 
     frame_save_dir = '../dataset/test/videoframe-'+ video_name[:video_name.index('.')]
 
+    cap = cv2.VideoCapture(video_name)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+        int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     if not os.path.exists(frame_save_dir):
         os.mkdir(frame_save_dir)
         cap = cv2.VideoCapture(video_name)
@@ -35,15 +39,17 @@ if __name__ == '__main__':
             success, frame = cap.read()
             if success:
                 print 'Reading frames: {}\r'.format(frame_count),
-                cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
+                if frame_count % 10 == 0:
+                    cv2.imwrite(os.path.join(frame_save_dir, 'frame{}.jpg'.format(frame_count)), frame)
                 frame_count += 1
             else:
                 print ''
-        cap.release()
+        
     else:
         print('Video had already split in frames stored in {}'.format(frame_save_dir))
 
-
+    cap.release()
+    
     out_dir = 'result' + str(int(time.time()))
     os.mkdir(out_dir)
 
