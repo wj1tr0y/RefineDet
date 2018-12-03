@@ -22,6 +22,7 @@ if __name__ == '__main__':
         print "{} doesn't exist.".format(video_name)
 
     frame_save_dir = '../dataset/test/videoframe-'+ video_name[:video_name.index('.')]
+
     if not os.path.exists(frame_save_dir):
         os.mkdir(frame_save_dir)
         cap = cv2.VideoCapture(video_name)
@@ -39,6 +40,8 @@ if __name__ == '__main__':
             else:
                 print ''
         cap.release()
+    else:
+        print('Video had already split in frames stored in {}'.format(frame_save_dir))
 
 
     out_dir = 'result' + str(int(time.time()))
@@ -61,8 +64,6 @@ if __name__ == '__main__':
         videoWriter.write(frame)
     videoWriter.release()
 
-
-    shutil.rmtree(frame_save_dir)
     shutil.rmtree(out_dir)
 
     cmd = "ffmpeg -threads 12 -y -i {} -strict experimental {}".format(out_video_name, out_video_name[:-4]+'.mp4')
