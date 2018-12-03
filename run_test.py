@@ -99,4 +99,4 @@ if __name__ == '__main__':
             result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
 
             # show result
-            ShowResults(im_name, image_file, result, save_dir, 0.4, save_fig=True)
+            ShowResults(im_name, image_file, result, save_dir, 0.5, save_fig=True)
