@@ -77,7 +77,8 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"
+train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
+#train_data_ratio = [0.95, 0.05]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -225,7 +226,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet18_{}".format(resize)
+job_name = "refinedet_resnet18_addneg_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -251,9 +252,9 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-# pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/res18_1024x1024_5w.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_100000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/zhili_coco_neg/labelmap_coco.prototxt"
+label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
 num_classes = 2
@@ -291,10 +292,10 @@ loss_param = {
 # parameters for generating priors.
 # minimum dimension of input image
 # min_dim = 1024
-# res3b_relu ==> 64 x 64
-# res4b_relu ==> 32 x 32
-# res5b_relu ==> 16 x 16
-# res5b_relu/conv1_2_relu ==> 8 x 8
+# res3b_relu ==> 128 x 128
+# res4b_relu ==> 64 x 64
+# res5b_relu ==> 32 x 32
+# res5b_relu/conv1_2_relu ==> 16 x 16
 arm_source_layers = ['res3b_relu', 'res4b_relu', 'res5b_relu', 'res6_relu']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
@@ -316,8 +317,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 125
-accum_batch_size = 125
+batch_size = 140
+accum_batch_size = 140 
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -347,11 +348,11 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [100000, 150000, 340000],
+    'stepvalue': [280000, 340000, 540000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
-    'max_iter': 340000,
+    'max_iter': 540000,
     'snapshot': 1000,
     'display': 10,
     'average_loss': 10,
@@ -373,7 +374,7 @@ det_out_param = {
     'num_classes': num_classes,
     'share_location': share_location,
     'background_label_id': background_label_id,
-    'nms_param': {'nms_threshold': 0.50, 'top_k': 1000},
+    'nms_param': {'nms_threshold': 0.45, 'top_k': 1000},
     'keep_top_k': 500,
     'confidence_threshold': 0.01,
     'code_type': code_type,
@@ -394,16 +395,29 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-# check_if_exist(pretrain_model)
+check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
 
 # Create train net.
 net = caffe.NetSpec()
-net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+if type(train_data) == str:
+    net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
+else:
+    data = []
+    label = []
+    for count, train_source in enumerate(train_data):
+        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_size_per_device, name='data'+str(count),
+        train=True, output_label=True, label_map_file=label_map_file,
+        transform_param=train_transform_param, batch_sampler=batch_sampler)
+        data.append(net['data'+str(count)])
+        label.append(net['label'+str(count)])
+
+    net.data = L.Concat(*data, axis=0)
+    net.label = L.Concat(*label, axis=0)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
@@ -547,7 +561,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
