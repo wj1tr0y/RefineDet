@@ -406,4 +406,4 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
 for i in net.keys():
-        print(net[i])
+        print(net[i].to_proto())
