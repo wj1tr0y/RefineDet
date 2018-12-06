@@ -77,7 +77,7 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/neg/neg_train_lmdb"
+train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -225,7 +225,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet18_{}".format(resize)
+job_name = "refinedet_resnet18_addneg_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -251,9 +251,9 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-# pretrain_model = "models/ResNet/coco/refinedet_resnet18_80_1024x1024/coco_refinedet_resnet18_80_1024x1024_iter_45000.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_139000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/neg/labelmap_coco.prototxt"
+label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
 num_classes = 2
@@ -347,12 +347,12 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [20000, 80000, 340000],
+    'stepvalue': [150000, 280000, 340000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
     'max_iter': 340000,
-    'snapshot': 5000,
+    'snapshot': 1000,
     'display': 10,
     'average_loss': 10,
     'type': "SGD",
@@ -394,7 +394,7 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-# check_if_exist(pretrain_model)
+check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -547,7 +547,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
