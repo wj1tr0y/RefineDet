@@ -418,7 +418,7 @@ else:
         label.append(net['label'+str(count)])
 
     net.data = L.Concat(*data, axis=0)
-    net.label = L.Concat(*label, axis=0)
+    net.label = L.Concat(*label, axis=2)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
