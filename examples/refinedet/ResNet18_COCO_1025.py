@@ -77,7 +77,8 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb","examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"]
+# train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb","examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"]
+train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
