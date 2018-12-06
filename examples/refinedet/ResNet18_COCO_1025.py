@@ -414,5 +414,3 @@ net.data = L.Concat(*[net['data1'],net['data1']], axis=0)
 net.label = L.Concat(*[net['label1'],net['label2']], axis=0)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
-# for i in net.keys():
-print(net.to_proto())
