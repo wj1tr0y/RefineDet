@@ -139,6 +139,7 @@ class Function(object):
             return
         bottom_names = []
         for inp in self.inputs:
+            print(inp)
             inp._to_proto(layers, names, autonames)
             bottom_names.append(layers[inp.fn].top[inp.n])
         layer = caffe_pb2.LayerParameter()
