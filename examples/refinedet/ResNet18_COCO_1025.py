@@ -407,50 +407,6 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
 print(type(net.data))
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
-AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
-arm_source_layers.reverse()
-
-mbox_layers = CreateRefineDetHead(net, data_layer='data', from_layers=arm_source_layers,
-        use_batchnorm=False, min_sizes=min_sizes, max_sizes=max_sizes,
-        aspect_ratios=aspect_ratios, steps=steps, normalizations=[],
-        num_classes=num_classes, share_location=share_location, flip=flip, clip=clip,
-        prior_variance=prior_variance, kernel_size=3, pad=1, lr_mult=1, from_layers2=odm_source_layers,
-        inter_layer_depth = [1, 1, 1, 1])
-
-name = "arm_loss"
-mbox_layers_arm = []
-mbox_layers_arm.append(mbox_layers[0])
-mbox_layers_arm.append(mbox_layers[1])
-mbox_layers_arm.append(mbox_layers[2])
-mbox_layers_arm.append(net.label)
-multibox_loss_param_arm = multibox_loss_param.copy()
-multibox_loss_param_arm['num_classes'] = 2
-net[name] = L.MultiBoxLoss(*mbox_layers_arm, multibox_loss_param=multibox_loss_param_arm,
-        loss_param=loss_param, include=dict(phase=caffe_pb2.Phase.Value('TRAIN')),
-        propagate_down=[True, True, False, False])
-
-# Create the MultiBoxLossLayer.
-conf_name = "arm_conf"
-reshape_name = "{}_reshape".format(conf_name)
-net[reshape_name] = L.Reshape(net[conf_name], shape=dict(dim=[0, -1, 2]))
-softmax_name = "{}_softmax".format(conf_name)
-net[softmax_name] = L.Softmax(net[reshape_name], axis=2)
-flatten_name = "{}_flatten".format(conf_name)
-net[flatten_name] = L.Flatten(net[softmax_name], axis=1)
-
-name = "odm_loss"
-mbox_layers_odm = []
-mbox_layers_odm.append(mbox_layers[3])
-mbox_layers_odm.append(mbox_layers[4])
-mbox_layers_odm.append(mbox_layers[2])
-mbox_layers_odm.append(net.label)
-mbox_layers_odm.append(net[flatten_name])
-mbox_layers_odm.append(mbox_layers[0])
-net[name] = L.MultiBoxLoss(*mbox_layers_odm, multibox_loss_param=multibox_loss_param,
-        loss_param=loss_param, include=dict(phase=caffe_pb2.Phase.Value('TRAIN')),
-        propagate_down=[True, True, False, False, False, False])
-
-
 with open(train_net_file, 'w') as f:
     print('name: "{}_train"'.format(model_name), file=f)
     print(net.to_proto(), file=f)
