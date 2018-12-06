@@ -311,8 +311,8 @@ def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
             data_param=dict(batch_size=batch_size2, backend=backend, source=source[1]),
             ntop=ntop, **kwargs)
 
-        print(type(L.Concat([data1, data2], axis=0))
-        print(type(L.Concat([label1, label2], axis=0))
+        print type(L.Concat([data1, data2], axis=0))
+        print type(L.Concat([label1, label2], axis=0))
 
 
 def ZFNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
