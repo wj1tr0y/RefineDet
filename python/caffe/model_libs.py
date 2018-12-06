@@ -305,13 +305,13 @@ def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
         batch_size1 = int(batch_size * lmdb_ratio)
         batch_size2 = batch_size - batch_size1
         data1, label1 = L.AnnotatedData(name="data1", annotated_data_param=annotated_data_param,
-            data_param=dict(batch_size=batch_size1, backend=backend, source=source),
+            data_param=dict(batch_size=batch_size1, backend=backend, source=source[0]),
             ntop=ntop, **kwargs)
         data2, label2 = L.AnnotatedData(name="data1", annotated_data_param=annotated_data_param,
-            data_param=dict(batch_size=batch_size2, backend=backend, source=source),
+            data_param=dict(batch_size=batch_size2, backend=backend, source=source[1]),
             ntop=ntop, **kwargs)
 
-        return (data1 + data2, label1 + label2)
+        return (L.Concat([data1, data2], axis=0), L.Concat([label1, label2], axis=0))
 
 
 def ZFNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
