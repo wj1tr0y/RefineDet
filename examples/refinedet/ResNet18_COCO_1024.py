@@ -78,6 +78,7 @@ remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
 train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
+train_data_ratio = [0.5]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -401,9 +402,22 @@ make_if_not_exist(snapshot_dir)
 
 # Create train net.
 net = caffe.NetSpec()
-net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+if type(train_data) == str:
+    net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
+else:
+    data = []
+    label = []
+    for count, train_source in enumerate(train_data):
+        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_size_per_device, name='data'+str(count),
+        train=True, output_label=True, label_map_file=label_map_file,
+        transform_param=train_transform_param, batch_sampler=batch_sampler)
+        data.append(net['data'+str(count)])
+        label.append(net['label'+str(count)])
+
+    net.data = L.Concat(*data, axis=0)
+    net.label = L.Concat(*label, axis=0)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
