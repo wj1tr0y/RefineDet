@@ -410,8 +410,8 @@ net.data2, net.label2 = CreateAnnotatedDataLayer(train_data[1], batch_size=batch
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-net.data = L.Concat([net['data1'],net['data1']], axis=0)
-net.label = L.Concat([net['label1'],net['label2']], axis=0)
+net.data = L.Concat(*[net['data1'],net['data1']], axis=0)
+net.label = L.Concat(*[net['label1'],net['label2']], axis=0)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 # for i in net.keys():
