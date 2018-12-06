@@ -78,8 +78,8 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-# train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb","examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"]
-train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
+train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb","examples/zhili_coco_neg/zhili_coco_neg_train_lmdb"]
+#train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -403,10 +403,10 @@ make_if_not_exist(snapshot_dir)
 
 # Create train net.
 net = caffe.NetSpec()
-net.data1, net.label1 = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+net.data1, net.label1 = CreateAnnotatedDataLayer(train_data[0], batch_size=batch_size_per_device, name='data1',
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
-net.data2, net.label2 = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+net.data2, net.label2 = CreateAnnotatedDataLayer(train_data[1], batch_size=batch_size_per_device, name='data2',
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
