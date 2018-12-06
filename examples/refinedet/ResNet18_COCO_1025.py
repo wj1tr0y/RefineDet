@@ -413,8 +413,8 @@ else:
     data = []
     label = []
     for count, train_source in enumerate(train_data):
-        batch_size_each = int(batch_size * train_data_ratio[count])
-        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_size_per_device, name='data'+str(count),
+        batch_size_each = int(batch_size_per_device * train_data_ratio[count])
+        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_size_each, name='data'+str(count),
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
         data.append(net['data'+str(count)])
