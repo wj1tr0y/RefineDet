@@ -77,7 +77,7 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/newped/newped_train_lmdb"]
+train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/coco/coco_train_lmdb"]
 train_data_ratio = [0.95, 0.05]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
