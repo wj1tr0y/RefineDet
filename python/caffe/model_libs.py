@@ -307,7 +307,7 @@ def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
         data1, label1 = L.AnnotatedData(name="data1", annotated_data_param=annotated_data_param,
             data_param=dict(batch_size=batch_size1, backend=backend, source=source[0]),
             ntop=ntop, **kwargs)
-        data2, label2 = L.AnnotatedData(name="data1", annotated_data_param=annotated_data_param,
+        data2, label2 = L.AnnotatedData(name="data2", annotated_data_param=annotated_data_param,
             data_param=dict(batch_size=batch_size2, backend=backend, source=source[1]),
             ntop=ntop, **kwargs)
 
