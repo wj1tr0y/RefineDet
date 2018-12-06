@@ -258,62 +258,30 @@ def InceptionTower(net, from_layer, tower_name, layer_params, **bn_param):
 def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
         output_label=True, train=True, label_map_file='', anno_type=None,
         transform_param={}, batch_sampler=[{}], lmdb_ratio=1):
-    if type(source) == str:
-        print('1')
-        if train:
-            kwargs = {
-                    'include': dict(phase=caffe_pb2.Phase.Value('TRAIN')),
-                    'transform_param': transform_param,
-                    }
-        else:
-            kwargs = {
-                    'include': dict(phase=caffe_pb2.Phase.Value('TEST')),
-                    'transform_param': transform_param,
-                    }
-        ntop = 1
-        if output_label:
-            ntop = 2
-        annotated_data_param = {
-            'label_map_file': label_map_file,
-            'batch_sampler': batch_sampler,
-            }
-        if anno_type is not None:
-            annotated_data_param.update({'anno_type': anno_type})
-        return L.AnnotatedData(name="data", annotated_data_param=annotated_data_param,
-            data_param=dict(batch_size=batch_size, backend=backend, source=source),
-            ntop=ntop, **kwargs)
+    print('1')
+    if train:
+        kwargs = {
+                'include': dict(phase=caffe_pb2.Phase.Value('TRAIN')),
+                'transform_param': transform_param,
+                }
     else:
-        print('2')
-        if train:
-            kwargs = {
-                    'include': dict(phase=caffe_pb2.Phase.Value('TRAIN')),
-                    'transform_param': transform_param,
-                    }
-        else:
-            kwargs = {
-                    'include': dict(phase=caffe_pb2.Phase.Value('TEST')),
-                    'transform_param': transform_param,
-                    }
-        ntop = 1
-        if output_label:
-            ntop = 2
-        annotated_data_param = {
-            'label_map_file': label_map_file,
-            'batch_sampler': batch_sampler,
-            }
-        if anno_type is not None:
-            annotated_data_param.update({'anno_type': anno_type})
+        kwargs = {
+                'include': dict(phase=caffe_pb2.Phase.Value('TEST')),
+                'transform_param': transform_param,
+                }
+    ntop = 1
+    if output_label:
+        ntop = 2
+    annotated_data_param = {
+        'label_map_file': label_map_file,
+        'batch_sampler': batch_sampler,
+        }
+    if anno_type is not None:
+        annotated_data_param.update({'anno_type': anno_type})
+    return L.AnnotatedData(name="data", annotated_data_param=annotated_data_param,
+        data_param=dict(batch_size=batch_size, backend=backend, source=source),
+        ntop=ntop, **kwargs)
 
-        batch_size1 = int(batch_size * lmdb_ratio)
-        batch_size2 = batch_size - batch_size1
-        data1, label1 = L.AnnotatedData(name="data1", annotated_data_param=annotated_data_param,
-            data_param=dict(batch_size=batch_size1, backend=backend, source=source[0]),
-            ntop=ntop, **kwargs)
-        data2, label2 = L.AnnotatedData(name="data2", annotated_data_param=annotated_data_param,
-            data_param=dict(batch_size=batch_size2, backend=backend, source=source[1]),
-            ntop=ntop, **kwargs)
-
-        return L.Concat([data1, data2], axis=0), L.Concat([label1, label2], axis=0)
 
 
 def ZFNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,

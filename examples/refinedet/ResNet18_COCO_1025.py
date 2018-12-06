@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 sys.path.append("./python")
 import caffe
+from caffe import layers as L
 from caffe.model_libs import *
 from google.protobuf import text_format
 
@@ -402,9 +403,15 @@ make_if_not_exist(snapshot_dir)
 
 # Create train net.
 net = caffe.NetSpec()
-net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+net.data1, net.label1 = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
+net.data2, net.label2 = CreateAnnotatedDataLayer(train_data, batch_size=batch_size_per_device,
+        train=True, output_label=True, label_map_file=label_map_file,
+        transform_param=train_transform_param, batch_sampler=batch_sampler)
+
+net.data = L.Concat([net['data1'],net['data1']], axis=0)
+net.label = L.Concat([net['label1'],net['label2']], axis=0)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 # for i in net.keys():
