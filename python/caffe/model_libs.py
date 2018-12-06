@@ -259,6 +259,7 @@ def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
         output_label=True, train=True, label_map_file='', anno_type=None,
         transform_param={}, batch_sampler=[{}], lmdb_ratio=1):
     if type(source) == str:
+        print('1')
         if train:
             kwargs = {
                     'include': dict(phase=caffe_pb2.Phase.Value('TRAIN')),
@@ -282,6 +283,7 @@ def CreateAnnotatedDataLayer(source, batch_size=32, backend=P.Data.LMDB,
             data_param=dict(batch_size=batch_size, backend=backend, source=source),
             ntop=ntop, **kwargs)
     else:
+        print('2')
         if train:
             kwargs = {
                     'include': dict(phase=caffe_pb2.Phase.Value('TRAIN')),
