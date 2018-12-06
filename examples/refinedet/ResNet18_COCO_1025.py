@@ -407,4 +407,4 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
 print(type(net.data))
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
-print(net)
+print(net.to_proto())
