@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(caffe_root, 'python'))
 import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
-
+import threading
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
@@ -38,6 +38,18 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         cv2.imwrite(os.path.join(save_dir, im_name[:-4] + '_dets.jpg'), img)
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg')
 
+def get_output(detections, names, img_dir, save_dir):
+    for j in range(batch_size):
+        det_label = detections[0, 0, 500*j:500*(j+1), 1]
+        det_conf = detections[0, 0, 500*j:500*(j+1), 2]
+        det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
+        det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
+        det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
+        det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
+        result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
+
+        # show result
+        ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
 
 
 if __name__ == '__main__':
@@ -93,15 +105,12 @@ if __name__ == '__main__':
             names.append(im_name)
             if count % batch_size == 0 and count != 0:
                 detections = net.forward()['detection_out']
-                for j in range(batch_size):
-                    det_label = detections[0, 0, 500*j:500*(j+1), 1]
-                    det_conf = detections[0, 0, 500*j:500*(j+1), 2]
-                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
-                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
-                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
-                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
-                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
-                    # show result
-                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
+                threads = []
+                for j in range(5):
+                    t = threading.Thread(target=get_output, name='thread{}'.format(j),
+                        args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
+                    threads.append(t)
+                    t.start()
+                for t in threads:
+                    t.join()
                 names = []
