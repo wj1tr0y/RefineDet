@@ -48,7 +48,7 @@ def get_output(detections, img_dir, names, save_dir):
         det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
         det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
         result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
+        print(names[j])
         # show result
         ShowResults(os.path.join(img_dir, names[j]), result, save_dir, threshold=0.30, save_fig=True)
 
