@@ -16,7 +16,7 @@ from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 
 
-def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
+def ShowResults(image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
     for i in range(0, results.shape[0]):
         score = results[i, -2]
@@ -26,10 +26,10 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         if label != 1:
             continue
         name = str(label)
-        xmin = int(round(results[i, 0]))
-        ymin = int(round(results[i, 1]))
-        xmax = int(round(results[i, 2]))
-        ymax = int(round(results[i, 3]))
+        xmin = int(round(results[i, 0] * img.shape[1]))
+        ymin = int(round(results[i, 1] * img.shape[0]))
+        xmax = int(round(results[i, 2] * img.shape[1]))
+        ymax = int(round(results[i, 3] * img.shape[0]))
         coords = (xmin, ymin), xmax - xmin, ymax - ymin
         cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 255, 255), 3)
         display_text = '%s: %.2f' % (name, score)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     # image preprocessing
     img_resize = 1024
-    batch_size = 25
+    batch_size = 50
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
@@ -84,24 +84,24 @@ if __name__ == '__main__':
         im_names = [x for x in im_names if 'dets' not in x]
         total = len(im_names)
         names = []
+        images = []
         for count, im_name in enumerate(im_names):
-            print '\t{}/{}: '.format(count + 1, total), 
             image_file = os.path.join(img_dir, im_name)
             image = caffe.io.load_image(image_file)
             transformed_image = transformer.preprocess('data', image)
-            net.blobs['data'].data[count % 25, ...] = transformed_image
+            net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
-            if count % 25 == 0 and count != 0:
-                names = []
+            if count % batch_size == 0 and count != 0:
                 detections = net.forward()['detection_out']
                 for j in range(batch_size):
                     det_label = detections[0, 0, 500*j:500*(j+1), 1]
                     det_conf = detections[0, 0, 500*j:500*(j+1), 2]
-                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3] * image.shape[1]
-                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4] * image.shape[0]
-                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5] * image.shape[1]
-                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6] * image.shape[0]
+                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
+                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
+                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
+                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
                     result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
 
                     # show result
-                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
+                    ShowResults(os.path.join(img_dir, names[j]), result, 0.30, save_fig=True)
+                names = []
