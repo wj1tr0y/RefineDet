@@ -61,8 +61,8 @@ if __name__ == '__main__':
         os.mkdir(save_dir)
 
     # load model
-    model_def = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_135000.caffemodel'
+    model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
+    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_100000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
