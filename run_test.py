@@ -67,7 +67,8 @@ if __name__ == '__main__':
 
     # image preprocessing
     img_resize = 1024
-    net.blobs['data'].reshape(1, 3, img_resize, img_resize)
+    batch_size = 25
+    net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
     transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
@@ -82,21 +83,25 @@ if __name__ == '__main__':
         im_names = os.listdir(img_dir)
         im_names = [x for x in im_names if 'dets' not in x]
         total = len(im_names)
+        names = []
         for count, im_name in enumerate(im_names):
             print '\t{}/{}: '.format(count + 1, total), 
             image_file = os.path.join(img_dir, im_name)
             image = caffe.io.load_image(image_file)
             transformed_image = transformer.preprocess('data', image)
-            net.blobs['data'].data[...] = transformed_image
+            net.blobs['data'].data[count % 25, ...] = transformed_image
+            names.append(im_name)
+            if count % 25 == 0 and count != 0:
+                names = []
+                detections = net.forward()['detection_out']
+                for j in range(batch_size):
+                    det_label = detections[0, 0, 500*j:500*(j+1), 1]
+                    det_conf = detections[0, 0, 500*j:500*(j+1), 2]
+                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3] * image.shape[1]
+                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4] * image.shape[0]
+                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5] * image.shape[1]
+                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6] * image.shape[0]
+                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
 
-            detections = net.forward()['detection_out']
-            det_label = detections[0, 0, :, 1]
-            det_conf = detections[0, 0, :, 2]
-            det_xmin = detections[0, 0, :, 3] * image.shape[1]
-            det_ymin = detections[0, 0, :, 4] * image.shape[0]
-            det_xmax = detections[0, 0, :, 5] * image.shape[1]
-            det_ymax = detections[0, 0, :, 6] * image.shape[0]
-            result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
-            # show result
-            ShowResults(im_name, image_file, result, save_dir, 0.4, save_fig=True)
+                    # show result
+                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
