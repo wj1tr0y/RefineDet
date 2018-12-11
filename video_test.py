@@ -62,7 +62,7 @@ if __name__ == '__main__':
     print('Detection done. Now render results to video file.')
 
     out_video_name = video_name[:video_name.index('.')] + out_dir + '.avi'
-    videoWriter = cv2.VideoWriter(out_video_name, cv2.VideoWriter_fourcc('X','V','I','D'), fps, size)
+    videoWriter = cv2.VideoWriter(out_video_name, cv2.VideoWriter_fourcc('X','V','I','D'), int(fps/10), size)
     frame_name = os.listdir(out_dir)
     frame_name = sorted(frame_name, key=lambda x: int(x[5:-9]))
     for i in frame_name:
