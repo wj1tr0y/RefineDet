@@ -265,7 +265,7 @@ normalization_mode = P.Loss.VALID
 code_type = P.PriorBox.CENTER_SIZE
 ignore_cross_boundary_bbox = False
 mining_type = P.MultiBoxLoss.MAX_NEGATIVE
-neg_pos_ratio = 3.
+neg_pos_ratio = 9.
 loc_weight = (neg_pos_ratio + 1.) / 4.
 multibox_loss_param = {
     'loc_loss_type': P.MultiBoxLoss.SMOOTH_L1,
