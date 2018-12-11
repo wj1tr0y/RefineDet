@@ -103,5 +103,5 @@ if __name__ == '__main__':
                     result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
 
                     # show result
-                    ShowResults(os.path.join(img_dir, names[j]), result, 0.30, save_fig=True)
+                    ShowResults(os.path.join(img_dir, names[j]), result, save_dir, threshold=0.30, save_fig=True)
                 names = []
