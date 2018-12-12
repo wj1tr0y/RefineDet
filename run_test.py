@@ -38,18 +38,18 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         cv2.imwrite(os.path.join(save_dir, im_name[:-4] + '_dets.jpg'), img)
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg')
 
-def get_output(detections, names, img_dir, save_dir):
-    for j in range(batch_size//5):
-        det_label = detections[0, 0, 500*j:500*(j+1), 1]
-        det_conf = detections[0, 0, 500*j:500*(j+1), 2]
-        det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
-        det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
-        det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
-        det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
+def get_output(det, name, img_dir, save_dir):
+    for j in range(det.shape[2]//500):
+        det_label = det[0, 0, 500*j:500*(j+1), 1]
+        det_conf = det[0, 0, 500*j:500*(j+1), 2]
+        det_xmin = det[0, 0, 500*j:500*(j+1), 3]
+        det_ymin = det[0, 0, 500*j:500*(j+1), 4]
+        det_xmax = det[0, 0, 500*j:500*(j+1), 5]
+        det_ymax = det[0, 0, 500*j:500*(j+1), 6]
         result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
 
         # show result
-        ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
+        ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
 
 if __name__ == '__main__':
@@ -107,28 +107,14 @@ if __name__ == '__main__':
             transformed_image = transformer.preprocess('data', image)
             net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
-            if count % batch_size == 0 and count != 0:
-                # for t in threads:
-                #     t.join()
-                # detections = net.forward()['detection_out']
-                # threads = []
-                # for j in range(0, batch_size, batch_size//5):
-                #     t = threading.Thread(target=get_output, name='thread{}'.format(j),
-                #         args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
-                #     threads.append(t)
-                #     t.start()
-                for j in range(batch_size):
-                    detections = net.forward()['detection_out']
-                    det_label = detections[0, 0, 500*j:500*(j+1), 1]
-                    det_conf = detections[0, 0, 500*j:500*(j+1), 2]
-                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
-                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
-                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
-                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
-                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
-                    # show result
-                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.30, save_fig=True)
+            if (count + 1) % batch_size == 0:
+                for t in threads:
+                    t.join()
+                detections = net.forward()['detection_out']
+                threads = []
+                for j in range(0, batch_size, batch_size//5):
+                    t = threading.Thread(target=get_output, name='thread{}'.format(j),
+                        args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
+                    threads.append(t)
+                    t.start()
                 names = []
-
-
