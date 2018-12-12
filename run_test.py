@@ -39,7 +39,7 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg')
 
 def get_output(detections, names, img_dir, save_dir):
-    for j in range(batch_size):
+    for j in range(batch_size//5):
         det_label = detections[0, 0, 500*j:500*(j+1), 1]
         det_conf = detections[0, 0, 500*j:500*(j+1), 2]
         det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
