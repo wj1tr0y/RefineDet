@@ -97,6 +97,7 @@ if __name__ == '__main__':
         total = len(im_names)
         names = []
         images = []
+        threads = []
         for count, im_name in enumerate(im_names):
             image_file = os.path.join(img_dir, im_name)
             image = caffe.io.load_image(image_file)
@@ -104,13 +105,15 @@ if __name__ == '__main__':
             net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
             if count % batch_size == 0 and count != 0:
+                for t in threads:
+                    t.join()
                 detections = net.forward()['detection_out']
                 threads = []
-                for j in range(5):
+                for j in range(0, batch_size, batch_size//5):
                     t = threading.Thread(target=get_output, name='thread{}'.format(j),
                         args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
                     threads.append(t)
                     t.start()
-                for t in threads:
-                    t.join()
                 names = []
+
+
