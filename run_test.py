@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     # load model
     model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_156000.caffemodel'
+    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_155000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
