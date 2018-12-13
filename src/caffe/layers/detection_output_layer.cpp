@@ -294,6 +294,43 @@ void DetectionOutputLayer<Dtype>::Forward_cpu(
       }
       all_indices.push_back(new_indices);
       num_kept += keep_top_k_;
+
+    } else if(keep_top_k_ > -1) {
+      vector<pair<float, pair<int, int> > > score_index_pairs;
+      for (map<int, vector<int> >::iterator it = indices.begin();
+           it != indices.end(); ++it) {
+        int label = it->first;
+        const vector<int>& label_indices = it->second;
+        if (conf_scores.find(label) == conf_scores.end()) {
+          // Something bad happened for current label.
+          LOG(FATAL) << "Could not find location predictions for " << label;
+          continue;
+        }
+        const vector<float>& scores = conf_scores.find(label)->second;
+        for (int j = 0; j < label_indices.size(); ++j) {
+          int idx = label_indices[j];
+          CHECK_LT(idx, scores.size());
+          score_index_pairs.push_back(std::make_pair(
+                  scores[idx], std::make_pair(label, idx)));
+        }
+        for (int j = 0; j < keep_top_k_ - num_det; j++) {
+          score_index_pairs.push_back(std::make_pair(
+                  0, std::make_pair(0, 0)));
+        }
+        // Keep top k results per image.
+        std::sort(score_index_pairs.begin(), score_index_pairs.end(),
+                SortScorePairDescend<pair<int, int> >);
+        score_index_pairs.resize(keep_top_k_);
+        // Store the new indices.
+        map<int, vector<int> > new_indices;
+        for (int j = 0; j < score_index_pairs.size(); ++j) {
+          int label = score_index_pairs[j].second.first;
+          int idx = score_index_pairs[j].second.second;
+          new_indices[label].push_back(idx);
+        }
+        all_indices.push_back(new_indices);
+        num_kept += keep_top_k_;
+      }
     } else {
       all_indices.push_back(indices);
       num_kept += num_det;

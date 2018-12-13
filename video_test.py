@@ -22,7 +22,7 @@ if __name__ == '__main__':
         print "{} doesn't exist.".format(video_name)
 
     frame_save_dir = '../dataset/test/videoframe-'+ video_name[:video_name.index('.')]
-
+    # split video into frame pictures
     cap = cv2.VideoCapture(video_name)
     fps = cap.get(cv2.CAP_PROP_FPS)
     size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     os.mkdir(out_dir)
 
     print 'Detecting pedestrian.....'
-    cmd = "python -u run_test.py --gpuid {} --out-dir {} --test-set {}".format(args.gpuid, out_dir, frame_save_dir.split('/')[-1])
+    cmd = "python run_test.py --gpuid {} --out-dir {} --test-set {}".format(args.gpuid, out_dir, frame_save_dir.split('/')[-1])
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output = process.communicate()

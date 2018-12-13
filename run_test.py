@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(caffe_root, 'python'))
 import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
-
+import threading
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
@@ -26,10 +26,10 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         if label != 1:
             continue
         name = str(label)
-        xmin = int(round(results[i, 0]))
-        ymin = int(round(results[i, 1]))
-        xmax = int(round(results[i, 2]))
-        ymax = int(round(results[i, 3]))
+        xmin = int(round(results[i, 0] * img.shape[1]))
+        ymin = int(round(results[i, 1] * img.shape[0]))
+        xmax = int(round(results[i, 2] * img.shape[1]))
+        ymax = int(round(results[i, 3] * img.shape[0]))
         coords = (xmin, ymin), xmax - xmin, ymax - ymin
         cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 255, 255), 3)
         display_text = '%s: %.2f' % (name, score)
@@ -38,6 +38,18 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         cv2.imwrite(os.path.join(save_dir, im_name[:-4] + '_dets.jpg'), img)
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg')
 
+def get_output(det, name, img_dir, save_dir):
+    for j in range(det.shape[2]//500):
+        det_label = det[0, 0, 500*j:500*(j+1), 1]
+        det_conf = det[0, 0, 500*j:500*(j+1), 2]
+        det_xmin = det[0, 0, 500*j:500*(j+1), 3]
+        det_ymin = det[0, 0, 500*j:500*(j+1), 4]
+        det_xmax = det[0, 0, 500*j:500*(j+1), 5]
+        det_ymax = det[0, 0, 500*j:500*(j+1), 6]
+        result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
+
+        # show result
+        ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
 
 if __name__ == '__main__':
@@ -62,12 +74,13 @@ if __name__ == '__main__':
 
     # load model
     model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_127000.caffemodel'
+    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_156000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
     img_resize = 1024
-    net.blobs['data'].reshape(1, 3, img_resize, img_resize)
+    batch_size = 50
+    net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
     transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
@@ -82,21 +95,27 @@ if __name__ == '__main__':
         im_names = os.listdir(img_dir)
         im_names = [x for x in im_names if 'dets' not in x]
         total = len(im_names)
+        names = []
+        images = []
+        # threads = []
         for count, im_name in enumerate(im_names):
-            print '\t{}/{}: '.format(count + 1, total), 
+            if total - count < batch_size:
+                batch_size = total - count
+                net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
             image_file = os.path.join(img_dir, im_name)
             image = caffe.io.load_image(image_file)
             transformed_image = transformer.preprocess('data', image)
-            net.blobs['data'].data[...] = transformed_image
-
-            detections = net.forward()['detection_out']
-            det_label = detections[0, 0, :, 1]
-            det_conf = detections[0, 0, :, 2]
-            det_xmin = detections[0, 0, :, 3] * image.shape[1]
-            det_ymin = detections[0, 0, :, 4] * image.shape[0]
-            det_xmax = detections[0, 0, :, 5] * image.shape[1]
-            det_ymax = detections[0, 0, :, 6] * image.shape[0]
-            result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
-            # show result
-            ShowResults(im_name, image_file, result, save_dir, 0.4, save_fig=True)
+            net.blobs['data'].data[count % batch_size, ...] = transformed_image
+            names.append(im_name)
+            if (count + 1) % batch_size == 0:
+                # for t in threads:
+                #     t.join()
+                detections = net.forward()['detection_out']
+                
+                # threads = []
+                for j in range(0, batch_size, batch_size//5):
+                    t = threading.Thread(target=get_output, name='thread{}'.format(j),
+                        args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
+                    # threads.append(t)
+                    t.start()
+                names = []
