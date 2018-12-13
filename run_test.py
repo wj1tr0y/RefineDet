@@ -15,8 +15,6 @@ import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 import threading
-import time
-
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
@@ -53,14 +51,6 @@ def get_output(det, name, img_dir, save_dir):
         # show result
         ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
-def loader(im_names):
-    for count, im_name in enumerate(im_names):
-        image_file = os.path.join(img_dir, im_name)
-        image = caffe.io.load_image(image_file)
-        transformed_image = transformer.preprocess('data', image)
-        batch_image[count, ...] = transformed_image
-        if count > 50:
-            Done = True
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
@@ -90,7 +80,6 @@ if __name__ == '__main__':
     # image preprocessing
     img_resize = 1024
     batch_size = 50
-    
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
@@ -109,28 +98,24 @@ if __name__ == '__main__':
         names = []
         images = []
         # threads = []
-        Done = False
-        batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
-        data_loader = threading.Thread(target=loader, args=(im_names,))
-        data_loader.start()
-        
-        time.sleep(10)
-        if Done:
-            for count, im_name in enumerate(im_names):
-                if total - count < batch_size:
-                    batch_size = total - count
-                    net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-                net.blobs['data'].data[count % batch_size, ...] = batch_image[count, ...]
-                names.append(im_name)
-                if (count + 1) % batch_size == 0:
-                    # for t in threads:
-                    #     t.join()
-                    detections = net.forward()['detection_out']
-                    
-                    # threads = []
-                    for j in range(0, batch_size, batch_size//5):
-                        t = threading.Thread(target=get_output, name='thread{}'.format(j),
-                            args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
-                        # threads.append(t)
-                        t.start()
-                    names = []
+        for count, im_name in enumerate(im_names):
+            if total - count < batch_size:
+                batch_size = total - count
+                net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
+            image_file = os.path.join(img_dir, im_name)
+            image = caffe.io.load_image(image_file)
+            transformed_image = transformer.preprocess('data', image)
+            net.blobs['data'].data[count % batch_size, ...] = transformed_image
+            names.append(im_name)
+            if (count + 1) % batch_size == 0:
+                # for t in threads:
+                #     t.join()
+                detections = net.forward()['detection_out']
+                
+                # threads = []
+                for j in range(0, batch_size, batch_size//5):
+                    t = threading.Thread(target=get_output, name='thread{}'.format(j),
+                        args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
+                    # threads.append(t)
+                    t.start()
+                names = []
