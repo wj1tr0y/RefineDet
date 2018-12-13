@@ -51,6 +51,17 @@ def get_output(det, name, img_dir, save_dir):
         # show result
         ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
+def loader():
+    batch_image = np.zeros(net.blobs['data'].shape)
+    for count, im_name in enumerate(im_names):
+        if total - count < batch_size:
+            batch_size = total - count
+            net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
+            batch_image = np.zeros(net.blobs['data'].shape)
+
+        image_file = os.path.join(img_dir, im_name)
+        image = caffe.io.load_image(image_file)
+        transformed_image = transformer.preprocess('data', image)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
@@ -97,6 +108,7 @@ if __name__ == '__main__':
         total = len(im_names)
         names = []
         images = []
+
         # threads = []
         for count, im_name in enumerate(im_names):
             if total - count < batch_size:
