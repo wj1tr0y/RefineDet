@@ -97,7 +97,7 @@ if __name__ == '__main__':
         total = len(im_names)
         names = []
         images = []
-        threads = []
+        # threads = []
         for count, im_name in enumerate(im_names):
             if total - count < batch_size:
                 batch_size = total - count
@@ -108,14 +108,14 @@ if __name__ == '__main__':
             net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
             if (count + 1) % batch_size == 0:
-                for t in threads:
-                    t.join()
+                # for t in threads:
+                #     t.join()
                 detections = net.forward()['detection_out']
                 
-                threads = []
+                # threads = []
                 for j in range(0, batch_size, batch_size//5):
                     t = threading.Thread(target=get_output, name='thread{}'.format(j),
                         args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
-                    threads.append(t)
+                    # threads.append(t)
                     t.start()
                 names = []
