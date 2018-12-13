@@ -53,6 +53,7 @@ def get_output(det, name, img_dir, save_dir):
 
 def loader(im_names):
     cond.acquire()
+    batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
     for count, im_name in enumerate(im_names):
         image_file = os.path.join(img_dir, im_name)
         image = caffe.io.load_image(image_file)
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     # image preprocessing
     img_resize = 1024
     batch_size = 50
-    batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
+    
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
