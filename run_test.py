@@ -52,16 +52,13 @@ def get_output(det, name, img_dir, save_dir):
         ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
 def loader(im_names):
-    cond.acquire()
-    batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
     for count, im_name in enumerate(im_names):
         image_file = os.path.join(img_dir, im_name)
         image = caffe.io.load_image(image_file)
         transformed_image = transformer.preprocess('data', image)
         batch_image[count, ...] = transformed_image
         if count > 50:
-            cond.notify()
-            cond.release()
+            Done = True
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
@@ -109,32 +106,28 @@ if __name__ == '__main__':
         total = len(im_names)
         names = []
         images = []
-        Done = False
         # threads = []
-
-        cond = threading.Condition()
-
+        Done = False
+        batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
         data_loader = threading.Thread(target=loader, args=(im_names,))
         data_loader.start()
-
-        cond.acquire()
-        cond.wait()
-        for count, im_name in enumerate(im_names):
-            if total - count < batch_size:
-                batch_size = total - count
-                net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-            net.blobs['data'].data[count % batch_size, ...] = batch_image[count, ...]
-            names.append(im_name)
-            if (count + 1) % batch_size == 0:
-                # for t in threads:
-                #     t.join()
-                detections = net.forward()['detection_out']
-                
-                # threads = []
-                for j in range(0, batch_size, batch_size//5):
-                    t = threading.Thread(target=get_output, name='thread{}'.format(j),
-                        args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
-                    # threads.append(t)
-                    t.start()
-                names = []
-        cond.release()
+        
+        if Done:
+            for count, im_name in enumerate(im_names):
+                if total - count < batch_size:
+                    batch_size = total - count
+                    net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
+                net.blobs['data'].data[count % batch_size, ...] = batch_image[count, ...]
+                names.append(im_name)
+                if (count + 1) % batch_size == 0:
+                    # for t in threads:
+                    #     t.join()
+                    detections = net.forward()['detection_out']
+                    
+                    # threads = []
+                    for j in range(0, batch_size, batch_size//5):
+                        t = threading.Thread(target=get_output, name='thread{}'.format(j),
+                            args=(detections[:, :, 500*j:500*(j+batch_size//5), :], names[j:j + batch_size//5], img_dir, save_dir))
+                        # threads.append(t)
+                        t.start()
+                    names = []
