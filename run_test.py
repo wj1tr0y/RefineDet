@@ -52,16 +52,15 @@ def get_output(det, name, img_dir, save_dir):
         ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
 def loader():
-    batch_image = np.zeros(net.blobs['data'].shape)
+    cond.acquire()
     for count, im_name in enumerate(im_names):
-        if total - count < batch_size:
-            batch_size = total - count
-            net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-            batch_image = np.zeros(net.blobs['data'].shape)
-
         image_file = os.path.join(img_dir, im_name)
         image = caffe.io.load_image(image_file)
         transformed_image = transformer.preprocess('data', image)
+        batch_image[count, ...] = transformed_image
+        if count > 50:
+            cond.notify()
+            cond.release()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
@@ -91,6 +90,7 @@ if __name__ == '__main__':
     # image preprocessing
     img_resize = 1024
     batch_size = 50
+    batch_image = np.zeros((len(im_names), 3, img_resize, img_resize))
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
@@ -108,16 +108,21 @@ if __name__ == '__main__':
         total = len(im_names)
         names = []
         images = []
-
+        Done = False
         # threads = []
+
+        cond = threading.Condition()
+
+        data_loader = threading.Thread(target=loader)
+        data_loader.start()
+
+        cond.acquire()
+        cond.wait()
         for count, im_name in enumerate(im_names):
             if total - count < batch_size:
                 batch_size = total - count
                 net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-            image_file = os.path.join(img_dir, im_name)
-            image = caffe.io.load_image(image_file)
-            transformed_image = transformer.preprocess('data', image)
-            net.blobs['data'].data[count % batch_size, ...] = transformed_image
+            net.blobs['data'].data[count % batch_size, ...] = batch_image[count, ...]
             names.append(im_name)
             if (count + 1) % batch_size == 0:
                 # for t in threads:
@@ -131,3 +136,4 @@ if __name__ == '__main__':
                     # threads.append(t)
                     t.start()
                 names = []
+        cond.release()
