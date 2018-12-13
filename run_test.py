@@ -51,7 +51,7 @@ def get_output(det, name, img_dir, save_dir):
         # show result
         ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
-def loader():
+def loader(im_names):
     cond.acquire()
     for count, im_name in enumerate(im_names):
         image_file = os.path.join(img_dir, im_name)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
         cond = threading.Condition()
 
-        data_loader = threading.Thread(target=loader)
+        data_loader = threading.Thread(target=loader, args=(im_names,))
         data_loader.start()
 
         cond.acquire()
