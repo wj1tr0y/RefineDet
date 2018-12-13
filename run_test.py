@@ -15,6 +15,8 @@ import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 import threading
+import time
+
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
@@ -112,6 +114,7 @@ if __name__ == '__main__':
         data_loader = threading.Thread(target=loader, args=(im_names,))
         data_loader.start()
         
+        time.sleep(10)
         if Done:
             for count, im_name in enumerate(im_names):
                 if total - count < batch_size:
