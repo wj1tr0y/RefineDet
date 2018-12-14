@@ -408,6 +408,5 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
 PeleeNetBody(net, from_layer='data')
-AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 
 print(net.to_proto())
