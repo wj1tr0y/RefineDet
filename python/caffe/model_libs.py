@@ -295,7 +295,7 @@ def res_block(net, from_layer, num_filter, block_id, bottleneck_fact=0.5, stride
     return relu_name
 
 # used in pelee
-def conv_block(net, bottom, name, num_output, use_relu=True, kernel_size=3, stride=1, pad=1, bn_prefix='', bn_postfix='/bn', 
+def conv_block(net, bottom, name, num_output, use_relu=True, kernel_size=3, stride=1, pad=1, bn_prefix='', bn_postfix='_bn', 
     scale_prefix='', scale_postfix='_scale'):
 
     conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, 
