@@ -274,28 +274,28 @@ def ResBody(net, from_layer, block_name, out2a, out2b, out2c, stride, use_branch
 # for pelee
 def res_block(net, from_layer, num_filter, block_id, bottleneck_fact=0.5, stride=2, pad=1, use_bn=True):
 
-  branch1 = '{}'.format(block_id)
-  ConvBNLayer(net, from_layer, branch1, use_bn=use_bn, use_relu=False, num_output=num_filter, kernel_size=1, pad=0, stride=stride)
+    branch1 = '{}'.format(block_id)
+    ConvBNLayer(net, from_layer, branch1, use_bn=use_bn, use_relu=False, num_output=num_filter, kernel_size=1, pad=0, stride=stride)
 
 
-  branch2a = '{}_b2a'.format(block_id)
-  ConvBNLayer(net, from_layer, branch2a, use_bn=use_bn, use_relu=True, num_output=int(num_filter*bottleneck_fact), kernel_size=1, pad=0, stride=1)
+    branch2a = '{}_b2a'.format(block_id)
+    ConvBNLayer(net, from_layer, branch2a, use_bn=use_bn, use_relu=True, num_output=int(num_filter*bottleneck_fact), kernel_size=1, pad=0, stride=1)
 
-  branch2b = '{}_b2b'.format(block_id)
-  ConvBNLayer(net, branch2a, branch2b, use_bn=use_bn, use_relu=True, num_output=int(num_filter*bottleneck_fact), kernel_size=3, pad=pad, stride=stride)
+    branch2b = '{}_b2b'.format(block_id)
+    ConvBNLayer(net, branch2a, branch2b, use_bn=use_bn, use_relu=True, num_output=int(num_filter*bottleneck_fact), kernel_size=3, pad=pad, stride=stride)
 
-  branch2c = '{}_b2c'.format(block_id)
-  ConvBNLayer(net, branch2b, branch2c, use_bn=use_bn, use_relu=False, num_output=num_filter, kernel_size=1, pad=0, stride=1)
+    branch2c = '{}_b2c'.format(block_id)
+    ConvBNLayer(net, branch2b, branch2c, use_bn=use_bn, use_relu=False, num_output=num_filter, kernel_size=1, pad=0, stride=1)
 
-  res_name = '{}_res'.format(block_id)
-  net[res_name] = L.Eltwise(net[branch1], net[branch2c])
-  relu_name = '{}_relu'.format(res_name)
-  net[relu_name] = L.ReLU(net[res_name], in_place=True)
+    res_name = '{}_res'.format(block_id)
+    net[res_name] = L.Eltwise(net[branch1], net[branch2c])
+    relu_name = '{}_relu'.format(res_name)
+    net[relu_name] = L.ReLU(net[res_name], in_place=True)
 
-  return relu_name
+    return relu_name
 
 # used in pelee
-def _conv_block(net, bottom, name, num_output, use_relu=True, kernel_size=3, stride=1, pad=1, bn_prefix='', bn_postfix='/bn', 
+def conv_block(net, bottom, name, num_output, use_relu=True, kernel_size=3, stride=1, pad=1, bn_prefix='', bn_postfix='/bn', 
     scale_prefix='', scale_postfix='_scale'):
 
     conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, 
@@ -328,70 +328,70 @@ def _conv_block(net, bottom, name, num_output, use_relu=True, kernel_size=3, str
     return out_layer
 
 # used in pelee
-def _dense_block(net, from_layer, num_layers, growth_rate, name,bottleneck_width=4):
+def dense_block(net, from_layer, num_layers, growth_rate, name,bottleneck_width=4):
 
-  x = from_layer
-  growth_rate = int(growth_rate/2)
+    x = from_layer
+    growth_rate = int(growth_rate/2)
 
-  for i in range(num_layers):
-    base_name = '{}_{}'.format(name,i+1)
-    inter_channel = int(growth_rate * bottleneck_width / 4) * 4
+    for i in range(num_layers):
+        base_name = '{}_{}'.format(name,i+1)
+        inter_channel = int(growth_rate * bottleneck_width / 4) * 4
 
-    cb1 = _conv_block(net, x, '{}_branch1a'.format(base_name), kernel_size=1, stride=1, 
-                               num_output=inter_channel, pad=0)
-    cb1 = _conv_block(net, cb1, '{}_branch1b'.format(base_name), kernel_size=3, stride=1, 
-                               num_output=growth_rate, pad=1)
+        cb1 = conv_block(net, x, '{}_branch1a'.format(base_name), kernel_size=1, stride=1, 
+                                num_output=inter_channel, pad=0)
+        cb1 = conv_block(net, cb1, '{}_branch1b'.format(base_name), kernel_size=3, stride=1, 
+                                num_output=growth_rate, pad=1)
 
-    cb2 = _conv_block(net, x, '{}_branch2a'.format(base_name), kernel_size=1, stride=1, 
-                               num_output=inter_channel, pad=0)
-    cb2 = _conv_block(net, cb2, '{}_branch2b'.format(base_name), kernel_size=3, stride=1, 
-                               num_output=growth_rate, pad=1)
-    cb2 = _conv_block(net, cb2, '{}_branch2c'.format(base_name), kernel_size=3, stride=1, 
-                               num_output=growth_rate, pad=1)
+        cb2 = conv_block(net, x, '{}_branch2a'.format(base_name), kernel_size=1, stride=1, 
+                                num_output=inter_channel, pad=0)
+        cb2 = conv_block(net, cb2, '{}_branch2b'.format(base_name), kernel_size=3, stride=1, 
+                                num_output=growth_rate, pad=1)
+        cb2 = conv_block(net, cb2, '{}_branch2c'.format(base_name), kernel_size=3, stride=1, 
+                                num_output=growth_rate, pad=1)
 
-    x = L.Concat(x, cb1, cb2, axis=1)
-    concate_name = '{}_concat'.format(base_name)
-    net[concate_name] = x
+        x = L.Concat(x, cb1, cb2, axis=1)
+        concate_name = '{}_concat'.format(base_name)
+        net[concate_name] = x
 
-  return x
+    return x
 
 
 # used in pelee
-def _transition_block(net, from_layer, num_filter, name, with_pooling=True):
+def transition_block(net, from_layer, num_filter, name, with_pooling=True):
 
-  conv = _conv_block(net, from_layer, name, kernel_size=1, stride=1, num_output=num_filter, pad=0)
+    conv = conv_block(net, from_layer, name, kernel_size=1, stride=1, num_output=num_filter, pad=0)
 
-  if with_pooling:
-    pool_name = '{}_pool'.format(name)
-    pooling = L.Pooling(conv, pool=P.Pooling.AVE, kernel_size=2, stride=2)
-    # pooling = L.Pooling(conv, pool=P.Pooling.MAX, kernel_size=2, stride=2)
-    net[pool_name] = pooling
-    from_layer = pooling
-  else:
-    from_layer = conv
+    if with_pooling:
+        pool_name = '{}_pool'.format(name)
+        pooling = L.Pooling(conv, pool=P.Pooling.AVE, kernel_size=2, stride=2)
+        # pooling = L.Pooling(conv, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+        net[pool_name] = pooling
+        from_layer = pooling
+    else:
+        from_layer = conv
 
 
-  return from_layer
+    return from_layer
 
 # used in pelee
 def _stem_block(net, from_layer, num_init_features):
 
-  stem1 = _conv_block(net, net[from_layer], 'stem1', kernel_size=3, stride=2,
-                           num_output=num_init_features, pad=1)
-  stem2 = _conv_block(net, stem1, 'stem2a', kernel_size=1, stride=1,
-                           num_output=int(num_init_features/2), pad=0)
-  stem2 = _conv_block(net, stem2, 'stem2b', kernel_size=3, stride=2,
-                           num_output=num_init_features, pad=1)
-  stem1 = L.Pooling(stem1, pool=P.Pooling.MAX, kernel_size=2, stride=2)
-  net['stem_pool'] = stem1
+    stem1 = conv_block(net, net[from_layer], 'stem1', kernel_size=3, stride=2,
+                            num_output=num_init_features, pad=1)
+    stem2 = conv_block(net, stem1, 'stem2a', kernel_size=1, stride=1,
+                            num_output=int(num_init_features/2), pad=0)
+    stem2 = conv_block(net, stem2, 'stem2b', kernel_size=3, stride=2,
+                            num_output=num_init_features, pad=1)
+    stem1 = L.Pooling(stem1, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    net['stem_pool'] = stem1
 
-  concate = L.Concat(stem1, stem2, axis=1)
-  concate_name = 'stem_concat'
-  net[concate_name] = concate
+    concate = L.Concat(stem1, stem2, axis=1)
+    concate_name = 'stem_concat'
+    net[concate_name] = concate
 
-  stem3 = _conv_block(net, concate, 'stem3', kernel_size=1, stride=1, num_output=num_init_features, pad=0)
+    stem3 = conv_block(net, concate, 'stem3', kernel_size=1, stride=1, num_output=num_init_features, pad=0)
 
-  return stem3
+    return stem3
 
 def PeleeNetBody(net, from_layer='data', growth_rate=32, block_config = [3,4,8,6], bottleneck_width=[1,2,4,4], num_init_features=32, init_kernel_size=3, use_stem_block=True):
 
@@ -399,14 +399,14 @@ def PeleeNetBody(net, from_layer='data', growth_rate=32, block_config = [3,4,8,6
 
     # Initial convolution
     if use_stem_block:
-      from_layer = _stem_block(net, from_layer, num_init_features)
+        from_layer = _stem_block(net, from_layer, num_init_features)
 
     else:
-      padding_size = init_kernel_size / 2
-      out_layer = _conv_block(net, net[from_layer], 'conv1', kernel_size=init_kernel_size, stride=2,
-                               num_output=num_init_features, pad=padding_size)
-      net.pool1 = L.Pooling(out_layer, pool=P.Pooling.MAX, kernel_size=2, pad=0,stride=2)
-      from_layer = net.pool1
+        padding_size = init_kernel_size / 2
+        out_layer = conv_block(net, net[from_layer], 'conv1', kernel_size=init_kernel_size, stride=2,
+                                num_output=num_init_features, pad=padding_size)
+        net.pool1 = L.Pooling(out_layer, pool=P.Pooling.MAX, kernel_size=2, pad=0,stride=2)
+        from_layer = net.pool1
 
     total_filter = num_init_features
     if type(bottleneck_width) is list:
@@ -415,93 +415,93 @@ def PeleeNetBody(net, from_layer='data', growth_rate=32, block_config = [3,4,8,6
         bottleneck_widths = [bottleneck_width] * 4
 
     for idx, num_layers in enumerate(block_config):
-      from_layer = _dense_block(net, from_layer, num_layers, growth_rate, name='stage{}'.format(idx+1), bottleneck_width=bottleneck_widths[idx])
-      total_filter += growth_rate * num_layers
-      
-      if idx == len(block_config) - 1:
-        with_pooling=False
-      else:
+        from_layer = dense_block(net, from_layer, num_layers, growth_rate, name='stage{}'.format(idx+1), bottleneck_width=bottleneck_widths[idx])
+        total_filter += growth_rate * num_layers
+        
+        # if idx == len(block_config) - 1:
+        #     with_pooling=False
+        # else:
         with_pooling=True
 
-      from_layer = _transition_block(net, from_layer, total_filter,name='stage{}_tb'.format(idx+1), with_pooling=with_pooling)
+        from_layer = transition_block(net, from_layer, total_filter,name='stage{}_tb'.format(idx+1), with_pooling=with_pooling)
 
     return net
 
-def Pelee(net, from_layer='data', use_batchnorm=False):
-    PeleeNetBody(net, from_layer)
-    add_extra_layers_pelee(net, use_batchnorm=use_batchnorm, prefix='ext1_fe')
+# def Pelee(net, from_layer='data', use_batchnorm=False):
+#     PeleeNetBody(net, from_layer)
+#     add_extra_layers_pelee(net, use_batchnorm=use_batchnorm, prefix='ext1_fe')
 
-    raw_source_layers = ['stage3_tb', 'stage4_tb','ext1_fe1_2', 'ext1_fe2_2','ext1_fe3_2']
+#     raw_source_layers = ['stage3_tb', 'stage4_tb','ext1_fe1_2', 'ext1_fe2_2','ext1_fe3_2']
 
-    # add_res_prediction_layers
-    last_base_layer = 'stage4_tb'
-    for i, from_layer in enumerate(raw_source_layers):
-        out_layer = '{}_ext_pm{}'.format(last_base_layer, i+2)
-        res_block(net, from_layer, 256, out_layer, stride=1, use_bn=True)
+#     # add_res_prediction_layers
+#     last_base_layer = 'stage4_tb'
+#     for i, from_layer in enumerate(raw_source_layers):
+#         out_layer = '{}_ext_pm{}'.format(last_base_layer, i+2)
+#         res_block(net, from_layer, 256, out_layer, stride=1, use_bn=True)
 
 
-    return net
+#     return net
 
-Pelee.mbox_source_layers = ['stage4_tb_ext_pm3_res_relu', 'stage4_tb_ext_pm4_res_relu', 'stage4_tb_ext_pm5_res_relu', 'stage4_tb_ext_pm6_res_relu']
+# Pelee.mbox_source_layers = ['stage4_tb_ext_pm3_res_relu', 'stage4_tb_ext_pm4_res_relu', 'stage4_tb_ext_pm5_res_relu', 'stage4_tb_ext_pm6_res_relu']
 
-def add_extra_layers_pelee(net, use_batchnorm=True, lr_mult=1, prefix='ext_fe'):
-    use_relu = True
+# def add_extra_layers_pelee(net, use_batchnorm=True, lr_mult=1, prefix='ext_fe'):
+#     use_relu = True
 
-    # Add additional convolutional layers.
+#     # Add additional convolutional layers.
 
-    # stage2_tb: 38 x 38 x 256
-    # stage3_tb: 19 x 19 x 512
-    # stage4_tb: 10 x 10 x 704 
-    from_layer = net.keys()[-1]
+#     # stage2_tb: 38 x 38 x 256
+#     # stage3_tb: 19 x 19 x 512
+#     # stage4_tb: 10 x 10 x 704 
+#     from_layer = net.keys()[-1]
 
-    # 5 x 5
-    out_layer = '{}_{}1_1'.format(from_layer, prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 1, 0, 1,
-      lr_mult=lr_mult)
+#     # 5 x 5
+#     out_layer = '{}_{}1_1'.format(from_layer, prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 1, 0, 1,
+#       lr_mult=lr_mult)
 
-    from_layer = out_layer
-    out_layer = '{}1_2'.format(prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 2,
-      lr_mult=lr_mult)
+#     from_layer = out_layer
+#     out_layer = '{}1_2'.format(prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 2,
+#       lr_mult=lr_mult)
 
-    # 3 x 3
-    from_layer = out_layer
-    out_layer = '{}2_1'.format(prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 1, 0, 1,
-      lr_mult=lr_mult)
+#     # 3 x 3
+#     from_layer = out_layer
+#     out_layer = '{}2_1'.format(prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 1, 0, 1,
+#       lr_mult=lr_mult)
 
-    from_layer = out_layer
-    out_layer = '{}2_2'.format(prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 0, 1,
-      lr_mult=lr_mult)
+#     from_layer = out_layer
+#     out_layer = '{}2_2'.format(prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 0, 1,
+#       lr_mult=lr_mult)
 
-    # 1 x 1
-    from_layer = out_layer
-    out_layer = '{}3_1'.format(prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 1, 0, 1,
-      lr_mult=lr_mult)
+#     # 1 x 1
+#     from_layer = out_layer
+#     out_layer = '{}3_1'.format(prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 1, 0, 1,
+#       lr_mult=lr_mult)
 
-    from_layer = out_layer
-    out_layer = '{}3_2'.format(prefix)
-    ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 0, 1,
-      lr_mult=lr_mult)
+#     from_layer = out_layer
+#     out_layer = '{}3_2'.format(prefix)
+#     ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 0, 1,
+#       lr_mult=lr_mult)
       
-def set_weight_sharing(net, lr_mult=1, share_layers=[['ext_pm2_mbox_conf','ext_pm3_mbox_conf','ext_pm4_mbox_conf','ext_pm5_mbox_conf','ext_pm6_mbox_conf']]):
+# def set_weight_sharing(net, lr_mult=1, share_layers=[['ext_pm2_mbox_conf','ext_pm3_mbox_conf','ext_pm4_mbox_conf','ext_pm5_mbox_conf','ext_pm6_mbox_conf']]):
 
-    for i, layers in enumerate(share_layers):
-        weight_name = 'weight_sharing{}_w'.format(i)
-        bias_name = 'weight_sharing{}_b'.format(i)
+#     for i, layers in enumerate(share_layers):
+#         weight_name = 'weight_sharing{}_w'.format(i)
+#         bias_name = 'weight_sharing{}_b'.format(i)
 
-        kwargs = {'param': [
-            dict(name=weight_name, lr_mult=lr_mult, decay_mult=1),
-            dict(name=bias_name, lr_mult=2 * lr_mult, decay_mult=0)]
-            }
+#         kwargs = {'param': [
+#             dict(name=weight_name, lr_mult=lr_mult, decay_mult=1),
+#             dict(name=bias_name, lr_mult=2 * lr_mult, decay_mult=0)]
+#             }
 
-        for sharing_layer in layers:
-            net.update(sharing_layer, kwargs)
+#         for sharing_layer in layers:
+#             net.update(sharing_layer, kwargs)
 
 
-    return net
+#     return net
 
 
 def InceptionTower(net, from_layer, tower_name, layer_params, **bn_param):
