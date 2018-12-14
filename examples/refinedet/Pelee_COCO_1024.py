@@ -15,16 +15,6 @@ import subprocess
 def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     use_relu = True
 
-    # Add additional convolutional layers.
-    # 512/32: 16 x 16
-    last_layer = net.keys()[-1]
-    from_layer = last_layer
-
-    # 512/64: 8 x 8
-    from_layer = dense_block(net, from_layer, 6, 32, name='stage5', bottleneck_width=4)
-    with_pooling=True
-    transition_block(net, from_layer, 896, name='stage5_tb', with_pooling=with_pooling)
-
     arm_source_layers.reverse()
     num_p = 5
     for index, layer in enumerate(arm_source_layers):
@@ -407,7 +397,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-PeleeNetBody(net, from_layer='data')
+PeleeNetBody(net, from_layer='data',block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
 
@@ -463,7 +453,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-PeleeNetBody(net, from_layer='data')
+PeleeNetBody(net, from_layer='data',block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
