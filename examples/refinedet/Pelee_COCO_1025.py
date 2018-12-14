@@ -397,6 +397,6 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-PeleeNetBody(net, from_layer='data')
-AddExtraLayers(net, arm_source_layers, use_batchnorm=True, block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
+PeleeNetBody(net, from_layer='data',block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
+AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 print(net.to_proto())
