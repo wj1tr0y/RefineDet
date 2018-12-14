@@ -32,7 +32,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
         out_layer = "TL{}_{}".format(num_p, 1)
         ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
 
-        if num_p == 6:
+        if num_p == 5:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
