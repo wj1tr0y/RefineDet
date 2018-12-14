@@ -15,52 +15,42 @@ import subprocess
 def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     use_relu = True
 
-    # Add additional convolutional layers.
-    # 512/32: 16 x 16
-    last_layer = net.keys()[-1]
-    from_layer = last_layer
+    arm_source_layers.reverse()
+    num_p = 5
+    for index, layer in enumerate(arm_source_layers):
+        from_layer = layer
+        out_layer = "TL{}_{}".format(num_p, 1)
+        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
 
-    # 512/64: 8 x 8
-    from_layer = dense_block(net, from_layer, 6, 32, name='stage5', bottleneck_width=4)
-    with_pooling=True
-    transition_block(net, from_layer, 896, name='stage5_tb', with_pooling=with_pooling)
+        if num_p == 5:
+            from_layer = out_layer
+            out_layer = "TL{}_{}".format(num_p, 2)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
 
-#     arm_source_layers.reverse()
-#     num_p = 5
-#     for index, layer in enumerate(arm_source_layers):
-#         from_layer = layer
-#         out_layer = "TL{}_{}".format(num_p, 1)
-#         ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+            from_layer = out_layer
+            out_layer = "P{}".format(num_p)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
 
-#         if num_p == 5:
-#             from_layer = out_layer
-#             out_layer = "TL{}_{}".format(num_p, 2)
-#             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+        else:
+            from_layer = out_layer
+            out_layer = "TL{}_{}".format(num_p, 2)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 3, 1, 1)
 
-#             from_layer = out_layer
-#             out_layer = "P{}".format(num_p)
-#             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+            from_layer = "P{}".format(num_p+1)
+            out_layer = "P{}-up".format(num_p+1)
+            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 2, 0, 2)
 
-#         else:
-#             from_layer = out_layer
-#             out_layer = "TL{}_{}".format(num_p, 2)
-#             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 3, 1, 1)
+            from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
+            out_layer = "Elt{}".format(num_p)
+            EltwiseLayer(net, from_layer, out_layer)
+            relu_name = '{}_relu'.format(out_layer)
+            net[relu_name] = L.ReLU(net[out_layer], in_place=True)
+            out_layer = relu_name
 
-#             from_layer = "P{}".format(num_p+1)
-#             out_layer = "P{}-up".format(num_p+1)
-#             DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 2, 0, 2)
-
-#             from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
-#             out_layer = "Elt{}".format(num_p)
-#             EltwiseLayer(net, from_layer, out_layer)
-#             relu_name = '{}_relu'.format(out_layer)
-#             net[relu_name] = L.ReLU(net[out_layer], in_place=True)
-#             out_layer = relu_name
-
-#             from_layer = out_layer
-#             out_layer = "P{}".format(num_p)
-#             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
-#         num_p = num_p - 1
+            from_layer = out_layer
+            out_layer = "P{}".format(num_p)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+        num_p = num_p - 1
 
     return net
 
@@ -408,5 +398,5 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
 PeleeNetBody(net, from_layer='data')
-AddExtraLayers(net, arm_source_layers)
+AddExtraLayers(net, arm_source_layers, use_batchnorm=True, block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
 print(net.to_proto())
