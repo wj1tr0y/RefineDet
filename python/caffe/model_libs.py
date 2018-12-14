@@ -511,7 +511,7 @@ def VGGNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
 
     return net
 
-def ResNet18Body1(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn_param):
+def ResNet18BodySmall(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn_param):
     conv_prefix = ''
     conv_postfix = ''
     bn_prefix = 'bn_'
@@ -1045,7 +1045,7 @@ def CreateMultiBoxHead(net, data_layer="data", num_classes=[], from_layers=[],
         # Create objectness prediction layer.
         if use_objectness:
             name = "{}_mbox_objectness".format(from_layer)
-            num_obj_output = num_priors_per_location * 2;
+            num_obj_output = num_priors_per_location * 2
             ConvBNLayer(net, from_layer, name, use_bn=use_batchnorm, use_relu=False, lr_mult=lr_mult,
                 num_output=num_obj_output, kernel_size=kernel_size, pad=pad, stride=1, **bn_param)
             permute_name = "{}_perm".format(name)
