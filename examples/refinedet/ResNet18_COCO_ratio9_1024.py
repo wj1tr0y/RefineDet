@@ -252,7 +252,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_50000.caffemodel"
+#pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_50000.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
@@ -301,7 +301,7 @@ odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
 steps = [16, 32, 64, 128]
-aspect_ratios = [[5/3], [5/3], [5/3], [5/3]]
+aspect_ratios = [[2], [2], [2], [2]]
 # variance used to encode/decode prior bboxes.
 if code_type == P.PriorBox.CENTER_SIZE:
   prior_variance = [0.1, 0.1, 0.2, 0.2]
@@ -395,7 +395,7 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+#check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -561,7 +561,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+#train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
