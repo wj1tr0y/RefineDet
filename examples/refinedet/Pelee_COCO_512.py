@@ -73,8 +73,8 @@ train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
-resize_width = 1024
-resize_height = 1024
+resize_width = 512
+resize_height = 512
 resize = "{}x{}".format(resize_width, resize_height)
 batch_sampler = [
         {
@@ -222,11 +222,11 @@ job_name = "refinedet_pelee_{}".format(resize)
 model_name = "coco_{}".format(job_name)
 
 # Directory which stores the model .prototxt file.
-save_dir = "models/ResNet/coco/{}".format(job_name)
+save_dir = "models/Pelee/coco/{}".format(job_name)
 # Directory which stores the snapshot of models.
-snapshot_dir = "models/ResNet/coco/{}".format(job_name)
+snapshot_dir = "models/Pelee/coco/{}".format(job_name)
 # Directory which stores the job script and log file.
-job_dir = "jobs/ResNet/coco/{}".format(job_name)
+job_dir = "jobs/Pelee/coco/{}".format(job_name)
 # Directory which stores the detection results.
 output_result_dir = "{}/data/RefineDet/coco/results/{}".format(os.environ['HOME'], job_name)
 
@@ -287,9 +287,9 @@ loss_param = {
 # res4b_relu ==> 32 x 32
 # res5b_relu ==> 16 x 16
 # res5b_relu/conv1_2_relu ==> 8 x 8
-arm_source_layers = ['stage2_tb', 'stage3_tb', 'stage4_tb', 'stage5_tb']
+arm_source_layers = ['stage2_tb_pool', 'stage3_tb_pool', 'stage4_tb_pool', 'stage5_tb_pool']
 odm_source_layers = ['P2', 'P3', 'P4', 'P5']
-min_sizes = [32, 64, 128, 256]
+min_sizes = [16, 32, 64, 128]
 max_sizes = [[], [], [], []]
 steps = [16, 32, 64, 128]
 aspect_ratios = [[2], [2], [2], [2]]
@@ -308,8 +308,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 5
-accum_batch_size = 5
+batch_size = 50
+accum_batch_size = 50
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -339,7 +339,7 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [100000, 150000, 340000],
+    'stepvalue': [200000, 280000, 340000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
