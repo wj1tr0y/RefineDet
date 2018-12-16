@@ -397,7 +397,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-PeleeNetBody(net, from_layer='data',block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
+PeleeNetBody(net, from_layer='data', growth_rate=16, block_config=[2,3,4,3,2], bottleneck_width=[1,2,4,4,2])
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
 
@@ -453,7 +453,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-PeleeNetBody(net, from_layer='data',block_config = [3,4,8,6,6], bottleneck_width=[1,2,4,4,4])
+PeleeNetBody(net, from_layer='data', growth_rate=16, block_config=[2,3,4,3,2], bottleneck_width=[1,2,4,4,2])
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()

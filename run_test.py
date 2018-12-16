@@ -73,13 +73,13 @@ if __name__ == '__main__':
         os.mkdir(save_dir)
 
     # load model
-    model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_63000.caffemodel'
+    model_def = 'models/Pelee/coco/refinedet_pelee_512x512/deploy.prototxt'
+    model_weights = 'models/Pelee/coco/refinedet_pelee_512x512/coco_refinedet_pelee_512x512_iter_31000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
-    img_resize = 1024
-    batch_size = 50
+    img_resize = 512
+    batch_size = 25
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
