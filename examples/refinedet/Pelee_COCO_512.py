@@ -20,25 +20,25 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     for index, layer in enumerate(arm_source_layers):
         from_layer = layer
         out_layer = "TL{}_{}".format(num_p, 1)
-        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 192, 3, 1, 1)
+        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
         if num_p == 5:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 192, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 192, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
         else:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 192, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 3, 1, 1)
 
             from_layer = "P{}".format(num_p+1)
             out_layer = "P{}-up".format(num_p+1)
-            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 192, 2, 0, 2)
+            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 2, 0, 2)
 
             from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
             out_layer = "Elt{}".format(num_p)
@@ -49,7 +49,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 192, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
         num_p = num_p - 1
 
     return net
@@ -397,7 +397,8 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-PeleeNetBody(net, from_layer='data', growth_rate=16, block_config=[1,2,4,2,1], bottleneck_width=[1,2,4,4,2])
+
+PeleeNetBody(net, from_layer='data', block_config=[1,2,4,4,2], bottleneck_width=[1,2,4,4,2])
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
 
@@ -453,7 +454,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-PeleeNetBody(net, from_layer='data', growth_rate=16, block_config=[2,3,4,3,2], bottleneck_width=[1,2,4,4,2])
+PeleeNetBody(net, from_layer='data', block_config=[1,2,4,4,2], bottleneck_width=[1,2,4,4,2])
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
