@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     # image preprocessing
     img_resize = 512
-    batch_size = 14
+    batch_size = 25
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
