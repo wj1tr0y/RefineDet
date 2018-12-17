@@ -107,8 +107,11 @@ if __name__ == '__main__':
                 batch_size = total - count
                 net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
             image_file = os.path.join(img_dir, im_name)
-            image = caffe.io.load_image(image_file)
-            transformed_image = transformer.preprocess('data', image)
+            try:
+                image = caffe.io.load_image(image_file)
+                transformed_image = transformer.preprocess('data', image)
+            except:
+                pass
             net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
             if (count + 1) % batch_size == 0:
