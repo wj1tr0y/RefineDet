@@ -103,7 +103,6 @@ if __name__ == '__main__':
         images = []
         threads = []
         for count, im_name in enumerate(im_names):
-            print("Processing {}/{}: ".format(count+1, total))
             if total - count < batch_size:
                 batch_size = total - count
                 net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
@@ -113,12 +112,17 @@ if __name__ == '__main__':
             net.blobs['data'].data[count % batch_size, ...] = transformed_image
             names.append(im_name)
             if (count + 1) % batch_size == 0:
-                for t in threads:
-                    t.join()
+                print("Processing {}/{}: ".format(count+1, total))
                 detections = net.forward()['detection_out']
-                threads = []
-                t = threading.Thread(target=get_output,
-                    args=(detections, names, img_dir, save_dir))
-                threads.append(t)
-                t.start()
+                for j in range(detections.shape[2]//500):
+                    det_label = detections[0, 0, 500*j:500*(j+1), 1]
+                    det_conf = detections[0, 0, 500*j:500*(j+1), 2]
+                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
+                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
+                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
+                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
+                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
+
+                    # show result
+                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.40, save_fig=True)
                 names = []
