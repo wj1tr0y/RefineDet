@@ -38,7 +38,7 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         h = ymax - ymin
         dets['results'].append({'bbox':[x, y, w, h]})
     if save_fig:
-        with open(os.path.join(save_dir, im_name[:-4] + '_dets.json','w')) as f:
+        with open(os.path.join(save_dir, im_name[:-4] + '_dets.json'), 'w') as f:
             f.writelines(json.dumps(dets, sort_keys=True, indent=2, ensure_ascii=False))
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.json')
 
