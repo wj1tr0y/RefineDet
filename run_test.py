@@ -74,12 +74,12 @@ if __name__ == '__main__':
 
     # load model
     model_def = 'models/Pelee/coco/refinedet_pelee_512x512/deploy.prototxt'
-    model_weights = 'models/Pelee/coco/refinedet_pelee_512x512/coco_refinedet_pelee_512x512_iter_31000.caffemodel'
+    model_weights = 'models/Pelee/coco/refinedet_pelee_512x512/coco_refinedet_pelee_512x512_iter_16000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
     img_resize = 512
-    batch_size = 25
+    batch_size = 50
     net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     transformer.set_transpose('data', (2, 0, 1))
