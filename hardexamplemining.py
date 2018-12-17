@@ -18,6 +18,8 @@ import threading
 import json
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
+    if im_name == 'error.jpg':
+        return
     img = cv2.imread(image_file)
     dets = {'results':[]}
     for i in range(0, results.shape[0]):
