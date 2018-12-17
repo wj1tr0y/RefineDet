@@ -15,9 +15,11 @@ import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 import threading
+import json
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
     img = cv2.imread(image_file)
+    dets = {'results':[]}
     for i in range(0, results.shape[0]):
         score = results[i, -2]
         if threshold and score < threshold:
@@ -30,13 +32,15 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         ymin = int(round(results[i, 1] * img.shape[0]))
         xmax = int(round(results[i, 2] * img.shape[1]))
         ymax = int(round(results[i, 3] * img.shape[0]))
-        coords = (xmin, ymin), xmax - xmin, ymax - ymin
-        cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 255, 255), 3)
-        display_text = '%s: %.2f' % (name, score)
-        cv2.putText(img, display_text, (xmin, ymin), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255,255,255), thickness=3)
+        x = xmin
+        y = ymin
+        w = xmax - xmin
+        h = ymax - ymin
+        dets['results'].append({'bbox':[x, y, w, h]})
     if save_fig:
-        cv2.imwrite(os.path.join(save_dir, im_name[:-4] + '_dets.jpg'), img)
-        print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg')
+        with open(os.path.join(save_dir, im_name[:-4] + '_dets.json','w')) as f:
+            f.writelines(json.dumps(dets, sort_keys=True, indent=2, ensure_ascii=False))
+        print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.json')
 
 def get_output(det, name, img_dir, save_dir):
     for j in range(det.shape[2]//500):
@@ -74,7 +78,7 @@ if __name__ == '__main__':
 
     # load model
     model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_129000.caffemodel'
+    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_178000.caffemodel'
     net = caffe.Net(model_def, model_weights, caffe.TEST)
 
     # image preprocessing
@@ -90,15 +94,16 @@ if __name__ == '__main__':
     test_set = args.test_set
     test_set = test_set.split(',')
     for i in test_set:
-        print('Processing test/{}/:'.format(i))
-        img_dir = '../dataset/test/' + str(i)
-        im_names = os.listdir(img_dir)
-        im_names = [x for x in im_names if 'dets' not in x]
+        print('/home/wangjilong/data/zhili_coco_posneg/{}'.format(i))
+        img_dir = '/home/wangjilong/data/zhili_coco_posneg/' + str(i)
+        im_names = os.listdir('/home/wangjilong/data/zhili_coco_posneg/Annotations')
+        im_names = [x[:-5]+'.jpg' for x in im_names]
         total = len(im_names)
         names = []
         images = []
         threads = []
         for count, im_name in enumerate(im_names):
+            print("Processing {}/{}: ".format(count+1, total))
             if total - count < batch_size:
                 batch_size = total - count
                 net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
@@ -111,7 +116,6 @@ if __name__ == '__main__':
                 for t in threads:
                     t.join()
                 detections = net.forward()['detection_out']
-                
                 threads = []
                 t = threading.Thread(target=get_output,
                     args=(detections, names, img_dir, save_dir))
