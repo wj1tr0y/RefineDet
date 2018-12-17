@@ -94,15 +94,16 @@ if __name__ == '__main__':
     test_set = args.test_set
     test_set = test_set.split(',')
     for i in test_set:
-        print('Processing test/{}/:'.format(i))
-        img_dir = '../dataset/test/' + str(i)
-        im_names = os.listdir(img_dir)
-        im_names = [x for x in im_names if 'dets' not in x]
+        print('/home/wangjilong/data/zhili_coco_posneg/{}'.format(i))
+        img_dir = '/home/wangjilong/data/zhili_coco_posneg/' + str(i)
+        im_names = os.listdir('/home/wangjilong/data/zhili_coco_posneg/Annotations')
+        im_names = [x[:-5]+'.jpg' for x in im_names]
         total = len(im_names)
         names = []
         images = []
         threads = []
         for count, im_name in enumerate(im_names):
+            print("Processing {}/{}: ".format(count+1, total))
             if total - count < batch_size:
                 batch_size = total - count
                 net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
@@ -115,7 +116,6 @@ if __name__ == '__main__':
                 for t in threads:
                     t.join()
                 detections = net.forward()['detection_out']
-                
                 threads = []
                 t = threading.Thread(target=get_output,
                     args=(detections, names, img_dir, save_dir))
