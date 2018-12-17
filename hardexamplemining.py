@@ -114,7 +114,7 @@ if __name__ == '__main__':
             if (count + 1) % batch_size == 0:
                 print("Processing {}/{}: ".format(count+1, total))
                 detections = net.forward()['detection_out']
-                for j in range(detections.shape[2]//500):
+                for j in range(batch_size):
                     det_label = detections[0, 0, 500*j:500*(j+1), 1]
                     det_conf = detections[0, 0, 500*j:500*(j+1), 2]
                     det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
