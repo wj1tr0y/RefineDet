@@ -69,7 +69,7 @@ def find_hard(det_name, count):
             if res['count'] == 0:
                 mismatch_bbox += 1
 
-        if mismatch_bbox > 10 or multi_bbox > 10 or lost_bbox > 10:
+        if mismatch_bbox > 15 or multi_bbox > 15 or lost_bbox > 15:
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
