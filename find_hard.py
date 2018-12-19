@@ -58,9 +58,9 @@ def find_hard(det_name, count):
                     gt['count'] += 1
                     res['count'] += 1
 
-        multi_bbox = 0
-        mismatch_bbox = 0
-        lost_bbox = 0
+        multi_bbox = 0.
+        mismatch_bbox = 0.
+        lost_bbox = 0.
         for gt in ann:
             if gt['count'] > 1:
                 multi_bbox += 1
@@ -70,7 +70,7 @@ def find_hard(det_name, count):
             if res['count'] == 0:
                 mismatch_bbox += 1
 
-        if mismatch_bbox > 12 or multi_bbox > 12 or lost_bbox > 12:
+        if mismatch_bbox/len(ann) > 0.1 or multi_bbox/len(ann) > 0.1 or lost_bbox/len(ann) > 0.1:
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
