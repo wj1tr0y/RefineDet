@@ -88,4 +88,13 @@ if __name__ == "__main__":
         threads.append(t)
     for t in threads:
         t.join()
+    
+    name = os.listdir('.')
+    name = [x for x in name if 'Thread' in x]
+    with open('hardexample.txt', 'w') as hd:
+        for i in name:
+            with open(i, 'r') as f:
+                for line in f.readlines():
+                    hd.write(line)
+        
 
