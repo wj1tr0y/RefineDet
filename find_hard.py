@@ -90,7 +90,7 @@ if __name__ == "__main__":
         t.join()
     
     name = os.listdir('.')
-    name = [x for x in name if 'Thread' in x]
+    name = [x for x in name if 'thread' in x]
     with open('hardexample.txt', 'w') as hd:
         for i in name:
             with open(i, 'r') as f:
