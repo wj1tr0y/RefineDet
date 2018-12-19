@@ -1,6 +1,7 @@
 import threading
 import json
 import os
+import threading
 
 def compute_iou(rec1, rec2):
     """
@@ -30,7 +31,8 @@ def compute_iou(rec1, rec2):
         intersect = (right_line - left_line) * (bottom_line - top_line)
         return intersect / (sum_area - intersect)
 
-def find_hard(det_name):
+def find_hard(det_name, count):
+    hard_name = []
     for det in det_name:
         det_file = os.path.join(det_dir, det)
         ann_file = os.path.join(ann_dir, det[:-10]+'.json')
@@ -57,18 +59,22 @@ def find_hard(det_name):
 
         multi_bbox = 0
         mismatch_bbox = 0
+        lost_bbox = 0
         for gt in ann:
             if gt['count'] > 1:
                 multi_bbox += 1
+            if gt['count'] == 0:
+                lost_bbox +=1
         for res in result:
             if res['count'] == 0:
                 mismatch_bbox += 1
             else:
                 print(res)
-        print(multi_bbox, mismatch_bbox)
-        # if mismatch_bbox > 2 or multi_bbox > 5:
-        #     hard_name.append(det)
-    
+
+        if mismatch_bbox > 10 or multi_bbox > 10 or lost_bbox > 10:
+            hard_name.append(det)
+    with open('thread{}'.format(count), 'w') as f:
+        f.writelines('\n'.join(hard_name))
 
 
 if __name__ == "__main__":
@@ -76,6 +82,10 @@ if __name__ == "__main__":
     ann_dir = '/home/wangjilong/data/zhili_coco_posneg/Annotations'
     det_dir = './detout'
     det_name = os.listdir(det_dir)
-    hard_name = []
-    find_hard(det_name)
+    threads = []
+    for j, i in enumerate(range(0, len(det_name), 10000)):
+        t = threading.Thread(target=find_hard, args=(det_name[i: i+10000], j))
+        threads.append(t)
+    for t in threads:
+        t.join()
 
