@@ -103,7 +103,7 @@ if __name__ == "__main__":
     
     with open('hardexample.txt', 'r') as hd:
         for i in hd.readlines():
-            shutil.copyfile(os.path.join(ann_dir, i[:-10] + '.json'), os.path.join(hard_dir, 'Annotations/'))
-            shutil.copyfile(os.path.join(img_dir, i[:-10] + '.jpg'), os.path.join(hard_dir, 'ImageSet/'))
+            shutil.copyfile(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(hard_dir, 'Annotations/'))
+            shutil.copyfile(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(hard_dir, 'ImageSet/'))
     print('copy done')
 
