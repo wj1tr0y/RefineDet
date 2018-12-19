@@ -2,6 +2,7 @@ import threading
 import json
 import os
 import threading
+import shutil
 
 def compute_iou(rec1, rec2):
     """
@@ -79,6 +80,7 @@ def find_hard(det_name, count):
 if __name__ == "__main__":
     img_dir = '/home/wangjilong/data/zhili_coco_posneg/ImageSet'
     ann_dir = '/home/wangjilong/data/zhili_coco_posneg/Annotations'
+    hard_dir = '/home/wangjilong/data/hardexamples'
     det_dir = './detout'
     det_name = os.listdir(det_dir)
     threads = []
@@ -96,5 +98,10 @@ if __name__ == "__main__":
             with open(i, 'r') as f:
                 for line in f.readlines():
                     hd.write(line)
-        
+    
+    with open('hardexample.txt', 'w') as hd:
+        for i in hd.readlines():
+            shutil.copyfile(os.path.join(ann_dir, i[:-10] + '.json'), os.path.join(hard_dir, 'Annotations/'))
+            shutil.copyfile(os.path.join(img_dir, i[:-10] + '.jpg'), os.path.join(hard_dir, 'ImageSet/'))
+    print('copy done')
 
