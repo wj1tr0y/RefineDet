@@ -72,7 +72,7 @@ def find_hard(det_name, count):
         if len(ann) == 0:
             if mismatch_bbox > 3:
                 hard_name.append(det)
-        elif mismatch_bbox/len(ann) > 0.1 or multi_bbox/len(ann) > 0.1 or lost_bbox/len(ann) > 0.1:
+        elif mismatch_bbox/len(ann) > 0.08 or multi_bbox/len(ann) > 0.08 or lost_bbox/len(ann) > 0.08:
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     
     with open('hardexample.txt', 'r') as hd:
         for i in hd.readlines():
-            shutil.copyfile(os.path.join(ann_dir, i[:-10] + '.json'), os.path.join(hard_dir, 'Annotations/'))
-            shutil.copyfile(os.path.join(img_dir, i[:-10] + '.jpg'), os.path.join(hard_dir, 'ImageSet/'))
+            shutil.copyfile(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(hard_dir, 'Annotations/'))
+            shutil.copyfile(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(hard_dir, 'ImageSet/'))
     print('copy done')
 
