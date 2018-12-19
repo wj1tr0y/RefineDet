@@ -85,6 +85,7 @@ if __name__ == "__main__":
     threads = []
     for j, i in enumerate(range(0, len(det_name), 10000)):
         t = threading.Thread(target=find_hard, args=(det_name[i: i+10000], j))
+        t.start()
         threads.append(t)
     for t in threads:
         t.join()
