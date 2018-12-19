@@ -41,7 +41,7 @@ if __name__ == "__main__":
         ann_file = os.path.join(ann_dir, det[:-10]+'.json')
         ann = json.load(open(ann_file, 'r'))
         result = json.load(open(det_file, 'r'))
-        result = result['result']
+        result = result['results']
         ann = ann['annotation']
         for res in result:
             res['count'] = 0
