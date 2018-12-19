@@ -32,9 +32,9 @@ def compute_iou(rec1, rec2):
         intersect = (right_line - left_line) * (bottom_line - top_line)
         return intersect / (sum_area - intersect)
 
-def find_hard(det_name, count):
+def find_hard(det_names, count):
     hard_name = []
-    for det in det_name:
+    for det in det_names:
         det_file = os.path.join(det_dir, det)
         ann_file = os.path.join(ann_dir, det[:-10]+'.json')
 
@@ -54,7 +54,7 @@ def find_hard(det_name, count):
             for res in result:
                 bbox2 = res['bbox']
                 rect2 = [bbox2[0], bbox2[1], bbox2[0]+bbox2[2], bbox2[1]+bbox2[3]]
-                if compute_iou(rect, rect2) > 0.5:
+                if compute_iou(rect, rect2) > 0.6:
                     gt['count'] += 1
                     res['count'] += 1
 
@@ -72,7 +72,8 @@ def find_hard(det_name, count):
         if len(ann) == 0:
             if mismatch_bbox > 3:
                 hard_name.append(det)
-        elif mismatch_bbox/len(ann) > 0.15 or multi_bbox/len(ann) > 0.15 or lost_bbox/len(ann) > 0.15:
+        elif mismatch_bbox/len(ann) > 0.2 or multi_bbox/len(ann) > 0.2 or lost_bbox/len(ann) > 0.2:
+            print(mismatch_bbox/len(ann), multi_bbox/len(ann), lost_bbox/len(ann))
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
