@@ -54,7 +54,7 @@ def find_hard(det_names, count):
             for res in result:
                 bbox2 = res['bbox']
                 rect2 = [bbox2[0], bbox2[1], bbox2[0]+bbox2[2], bbox2[1]+bbox2[3]]
-                if compute_iou(rect, rect2) > 0.6:
+                if compute_iou(rect, rect2) > 0.5:
                     gt['count'] += 1
                     res['count'] += 1
 
@@ -72,7 +72,7 @@ def find_hard(det_names, count):
         if len(ann) == 0:
             if mismatch_bbox > 3:
                 hard_name.append(det)
-        elif mismatch_bbox/len(ann) > 0.2 or multi_bbox/len(ann) > 0.2 or lost_bbox/len(ann) > 0.2:
+        elif mismatch_bbox > 5 or multi_bbox > 10 or lost_bbox > 5:
             print(mismatch_bbox/len(ann), multi_bbox/len(ann), lost_bbox/len(ann))
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
