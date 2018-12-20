@@ -29,7 +29,6 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         label = int(results[i, -1])
         if label != 1:
             continue
-        name = str(label)
         xmin = int(round(results[i, 0] * img.shape[1]))
         ymin = int(round(results[i, 1] * img.shape[0]))
         xmax = int(round(results[i, 2] * img.shape[1]))
@@ -45,19 +44,6 @@ def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=
         with open(os.path.join(save_dir, im_name[:-4] + '_dets.json'), 'w') as f:
             f.writelines(json.dumps(dets, sort_keys=True, indent=2, ensure_ascii=False))
         print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.json')
-
-def get_output(det, name, img_dir, save_dir):
-    for j in range(det.shape[2]//500):
-        det_label = det[0, 0, 500*j:500*(j+1), 1]
-        det_conf = det[0, 0, 500*j:500*(j+1), 2]
-        det_xmin = det[0, 0, 500*j:500*(j+1), 3]
-        det_ymin = det[0, 0, 500*j:500*(j+1), 4]
-        det_xmax = det[0, 0, 500*j:500*(j+1), 5]
-        det_ymax = det[0, 0, 500*j:500*(j+1), 6]
-        result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
-        # show result
-        ShowResults(name[j], os.path.join(img_dir, name[j]), result, save_dir, 0.40, save_fig=True)
 
 
 if __name__ == '__main__':
@@ -104,8 +90,6 @@ if __name__ == '__main__':
         im_names = [x[:-5]+'.jpg' for x in im_names]
         total = len(im_names)
         names = []
-        images = []
-        threads = []
         for count, im_name in enumerate(im_names):
             if total - count < batch_size:
                 batch_size = total - count
@@ -115,10 +99,10 @@ if __name__ == '__main__':
                 image = caffe.io.load_image(image_file)
                 transformed_image = transformer.preprocess('data', image)
                 names.append(im_name)
+                net.blobs['data'].data[count % batch_size, ...] = transformed_image
             except:
                 names.append('error.jpg')
 
-            net.blobs['data'].data[count % batch_size, ...] = transformed_image
             if (count + 1) % batch_size == 0:
                 print("Processing {}/{}: ".format(count+1, total))
                 detections = net.forward()['detection_out']
