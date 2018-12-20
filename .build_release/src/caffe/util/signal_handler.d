@@ -1,6 +1,6 @@
 .build_release/src/caffe/util/signal_handler.o: \
  src/caffe/util/signal_handler.cpp include/caffe/util/signal_handler.h \
- include/caffe/proto/caffe.pb.h include/caffe/solver.hpp \
+ .build_release/src/caffe/proto/caffe.pb.h include/caffe/solver.hpp \
  include/caffe/net.hpp include/caffe/blob.hpp include/caffe/common.hpp \
  include/caffe/util/device_alternate.hpp \
  /usr/local/cuda/include/cublas_v2.h /usr/local/cuda/include/cublas_api.h \
@@ -32,7 +32,7 @@
 
 include/caffe/util/signal_handler.h:
 
-include/caffe/proto/caffe.pb.h:
+.build_release/src/caffe/proto/caffe.pb.h:
 
 include/caffe/solver.hpp:
 
