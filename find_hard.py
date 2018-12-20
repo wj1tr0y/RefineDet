@@ -5,32 +5,25 @@ import threading
 import shutil
 
 def compute_iou(rec1, rec2):
-    """
-    computing IoU
-    :param rec1: (y0, x0, y1, x1), which reflects
-            (top, left, bottom, right)
-    :param rec2: (y0, x0, y1, x1)
-    :return: scala value of IoU
-    """
-    # computing area of each rectangles
-    S_rec1 = (rec1[2] - rec1[0]) * (rec1[3] - rec1[1])
-    S_rec2 = (rec2[2] - rec2[0]) * (rec2[3] - rec2[1])
- 
-    # computing the sum_area
-    sum_area = S_rec1 + S_rec2
- 
-    # find the each edge of intersect rectangle
-    left_line = max(rec1[1], rec2[1])
-    right_line = min(rec1[3], rec2[3])
-    top_line = max(rec1[0], rec2[0])
-    bottom_line = min(rec1[2], rec2[2])
- 
-    # judge if there is an intersect
-    if left_line >= right_line or top_line >= bottom_line:
-        return 0
+    one_x, one_y, one_w, one_h = rec1
+    two_x, two_y, two_w, two_h = rec2
+    if((abs(one_x - two_x) < ((one_w + two_w) / 2.0)) and (abs(one_y - two_y) < ((one_h + two_h) / 2.0))):
+        lu_x_inter = max((one_x - (one_w / 2.0)), (two_x - (two_w / 2.0)))
+        lu_y_inter = min((one_y + (one_h / 2.0)), (two_y + (two_h / 2.0)))
+
+        rd_x_inter = min((one_x + (one_w / 2.0)), (two_x + (two_w / 2.0)))
+        rd_y_inter = max((one_y - (one_h / 2.0)), (two_y - (two_h / 2.0)))
+
+        inter_w = abs(rd_x_inter - lu_x_inter)
+        inter_h = abs(lu_y_inter - rd_y_inter)
+
+        inter_square = inter_w * inter_h
+        union_square = (one_w * one_h) + (two_w * two_h) - inter_square
+
+        calcIOU = inter_square / union_square * 1.0
+        return calcIOU
     else:
-        intersect = (right_line - left_line) * (bottom_line - top_line)
-        return intersect / (sum_area - intersect)
+        return 0
 
 def find_hard(det_names, count):
     hard_name = []
@@ -50,10 +43,10 @@ def find_hard(det_names, count):
             
         for gt in ann:
             bbox = gt['bbox']
-            rect = [bbox[0], bbox[1], bbox[0]+bbox[2], bbox[1]+bbox[3]]
+            rect = [bbox[0], bbox[1], bbox[2], bbox[3]]
             for res in result:
                 bbox2 = res['bbox']
-                rect2 = [bbox2[0], bbox2[1], bbox2[0]+bbox2[2], bbox2[1]+bbox2[3]]
+                rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
                 if compute_iou(rect, rect2) > 0.5:
                     gt['count'] += 1
                     res['count'] += 1
@@ -72,7 +65,7 @@ def find_hard(det_names, count):
         if len(ann) == 0:
             if mismatch_bbox > 3:
                 hard_name.append(det)
-        elif mismatch_bbox > 10 or multi_bbox > 10 or lost_bbox > 5:
+        elif mismatch_bbox/len(ann) > 0.08 or multi_bbox/len(ann) > 0.08 or lost_bbox/len(ann) > 0.08:
             hard_name.append(det)
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
@@ -100,6 +93,7 @@ if __name__ == "__main__":
             with open(i, 'r') as f:
                 for line in f.readlines():
                     hd.write(line)
+            hd.write('\n')
     
 # img_dir = '/home/wangjilong/data/zhili_coco_posneg/ImageSet'
 # ann_dir = '/home/wangjilong/data/zhili_coco_posneg/Annotations'
