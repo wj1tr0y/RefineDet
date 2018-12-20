@@ -18,8 +18,6 @@ import threading
 import json
 
 def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
-    if im_name == 'error.jpg':
-        return
     img = cv2.imread(image_file)
     dets = {'results':[]}
     for i in range(0, results.shape[0]):
@@ -88,6 +86,7 @@ if __name__ == '__main__':
         img_dir = '/home/wangjilong/data/zhili_coco_posneg/' + str(i)
         im_names = os.listdir('/home/wangjilong/data/zhili_coco_posneg/Annotations')
         im_names = [x[:-5]+'.jpg' for x in im_names]
+        im_names = im_names[:70000]
         total = len(im_names)
         names = []
         for count, im_name in enumerate(im_names):
@@ -102,10 +101,12 @@ if __name__ == '__main__':
                 net.blobs['data'].data[count % batch_size, ...] = transformed_image
             except:
                 names.append('error.jpg')
+                net.blobs['data'].data[count % batch_size, ...] = np.zeros((1, 3, img_resize, img_resize))
 
             if (count + 1) % batch_size == 0:
-                print("Processing {}/{}: ".format(count+1, total))
+                print("Processing {}/{}: ".format(count + 1, total))
                 detections = net.forward()['detection_out']
+                print(detections.shape)
                 for j in range(batch_size):
                     det_label = detections[0, 0, 500*j:500*(j+1), 1]
                     det_conf = detections[0, 0, 500*j:500*(j+1), 2]
@@ -114,7 +115,6 @@ if __name__ == '__main__':
                     det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
                     det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
                     result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-
                     # show result
                     ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.40, save_fig=True)
                 names = []
