@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 names.append('error.jpg')
 
             if (count + 1) % batch_size == 0:
-                print("Processing {}/{}: ".format(count+1, total))
+                print("Processing {}/{}: ".format(count + 1, total))
                 detections = net.forward()['detection_out']
                 for j in range(batch_size):
                     det_label = detections[0, 0, 500*j:500*(j+1), 1]
