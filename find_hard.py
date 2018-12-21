@@ -69,7 +69,7 @@ def find_hard(det_names, count):
             if len(ann) == 0:
                 if mismatch_bbox > 3:
                     hard_name.append(det)
-            elif mismatch_bbox/len(ann) > 0.3 or multi_bbox/len(ann) > 0.4 or lost_bbox/len(ann) > 0.3:
+            elif mismatch_bbox/len(ann) > 0.2 or multi_bbox/len(ann) > 0.2 or lost_bbox/len(ann) > 0.2:
                 hard_name.append(det)
         except:
             pass
