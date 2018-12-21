@@ -40,16 +40,20 @@ def find_hard(det_names, count):
             res['count'] = 0
         for gt in ann:
             gt['count'] = 0
-            
-        for gt in ann:
-            bbox = gt['bbox']
-            rect = [bbox[0], bbox[1], bbox[2], bbox[3]]
-            for res in result:
-                bbox2 = res['bbox']
-                rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
-                if compute_iou(rect, rect2) > 0.5:
-                    gt['count'] += 1
-                    res['count'] += 1
+                 
+        for i in range(len(result)):
+            bbox2 = result[i]['bbox']
+            rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
+            max_iou = (-1, 0)
+            for j in range(len(ann)):
+                bbox = ann[j]['bbox']
+                rect = [bbox[0], bbox[1], bbox[2], bbox[3]]
+                if compute_iou(rect, rect2) > max_iou[1] and compute_iou(rect, rect2) > 0.5:
+                    max_iou = (j, compute_iou(rect, rect2))
+            if max_iou[0] != -1:
+                ann[max_iou[0]]['count'] += 1
+                result[i]['count'] += 1
+
 
         multi_bbox = 0.
         mismatch_bbox = 0.
