@@ -392,7 +392,7 @@ det_eval_param = {
 
 ### Hopefully you don't need to change the following ###
 # Check file.
-check_if_exist(train_data)
+# check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
 check_if_exist(pretrain_model)
