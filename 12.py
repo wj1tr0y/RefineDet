@@ -11,16 +11,16 @@ with open('hardexample.txt', 'r') as hd:
     for i in hd.readlines():
         try:
             int(i[:12])
-            shutil.copy(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(de_ann_dir, i[:-11] + '.json'))
-            shutil.copy(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(de_img_dir, i[:-11] + '.jpg'))
-            count += 1
-            print(count)
+            # shutil.copy(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(de_ann_dir, i[:-11] + '.json'))
+            # shutil.copy(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(de_img_dir, i[:-11] + '.jpg'))
+            # count += 1
+            # print(count)
         except:
-            pass
-            # if i not in fake:
-            #     shutil.copy(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(de_ann_dir, i[:-11] + '.json'))
-            #     shutil.copy(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(de_img_dir, i[:-11] + '.jpg'))
-            #     count += 1
-            #     print(count)
+            # pass
+            if i not in fake:
+                shutil.copy(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(de_ann_dir, i[:-11] + '.json'))
+                shutil.copy(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(de_img_dir, i[:-11] + '.jpg'))
+                count += 1
+                print(count)
      
 print('copy done')
