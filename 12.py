@@ -10,8 +10,8 @@ with open('hardexample.txt', 'r') as hd:
         try:
             a = int(i[:12])
         except:
-            shutil.move(os.path.join(ann_dir, i[:-11] + '.json'), os.path.join(de_ann_dir, i[:-11] + '.json'))
-            shutil.move(os.path.join(img_dir, i[:-11] + '.jpg'), os.path.join(de_img_dir, i[:-11] + '.jpg'))
+            shutil.copy(os.path.join(de_ann_dir, i[:-11] + '.json'), os.path.join(ann_dir, i[:-11] + '.json'))
+            shutil.copy(os.path.join(de_img_dir, i[:-11] + '.jpg'), os.path.join(img_dir, i[:-11] + '.jpg'))
             count += 1
             print(count)
      
