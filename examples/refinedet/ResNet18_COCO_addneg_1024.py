@@ -77,8 +77,8 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb"
-#train_data_ratio = [0.95, 0.05]
+train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", '"examples/hardexamples/hardexamples_train_lmdb"']
+train_data_ratio = [0.7, 0.3]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -252,7 +252,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_100000.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_178000.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
@@ -410,14 +410,15 @@ else:
     data = []
     label = []
     for count, train_source in enumerate(train_data):
-        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_size_per_device, name='data'+str(count),
+        batch_each = int(batch_size_per_device * train_data_ratio[count])
+        net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_each, name='data'+str(count),
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
         data.append(net['data'+str(count)])
         label.append(net['label'+str(count)])
 
     net.data = L.Concat(*data, axis=0)
-    net.label = L.Concat(*label, axis=0)
+    net.label = L.Concat(*label, axis=2)
 
 ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
