@@ -415,6 +415,7 @@ else:
         net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_each, name='data'+str(count),
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
+        
         data.append(net['data'+str(count)])
         label.append(net['label'+str(count)])
 
