@@ -47,7 +47,7 @@ def find_hard(det_names, count):
             for res in result:
                 bbox2 = res['bbox']
                 rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
-                if compute_iou(rect, rect2) > 0.5:
+                if compute_iou(rect, rect2) > 0.75:
                     gt['count'] += 1
                     res['count'] += 1
 
