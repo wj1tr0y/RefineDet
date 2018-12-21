@@ -30,47 +30,49 @@ def find_hard(det_names, count):
     for det in det_names:
         det_file = os.path.join(det_dir, det)
         ann_file = os.path.join(ann_dir, det[:-10]+'.json')
+        try:
+            ann = json.load(open(ann_file, 'r'))
+            result = json.load(open(det_file, 'r'))
+            result = result['results']
+            ann = ann['annotation']
 
-        ann = json.load(open(ann_file, 'r'))
-        result = json.load(open(det_file, 'r'))
-        result = result['results']
-        ann = ann['annotation']
-
-        for res in result:
-            res['count'] = 0
-        for gt in ann:
-            gt['count'] = 0
-                 
-        for i in range(len(result)):
-            bbox2 = result[i]['bbox']
-            rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
-            max_iou = (-1, 0)
-            for j in range(len(ann)):
-                bbox = ann[j]['bbox']
-                rect = [bbox[0], bbox[1], bbox[2], bbox[3]]
-                if compute_iou(rect, rect2) > max_iou[1] and compute_iou(rect, rect2) > 0.5:
-                    max_iou = (j, compute_iou(rect, rect2))
-            if max_iou[0] != -1:
-                ann[max_iou[0]]['count'] += 1
-                result[i]['count'] += 1
+            for res in result:
+                res['count'] = 0
+            for gt in ann:
+                gt['count'] = 0
+                    
+            for i in range(len(result)):
+                bbox2 = result[i]['bbox']
+                rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
+                max_iou = (-1, 0)
+                for j in range(len(ann)):
+                    bbox = ann[j]['bbox']
+                    rect = [bbox[0], bbox[1], bbox[2], bbox[3]]
+                    if compute_iou(rect, rect2) > max_iou[1] and compute_iou(rect, rect2) > 0.5:
+                        max_iou = (j, compute_iou(rect, rect2))
+                if max_iou[0] != -1:
+                    ann[max_iou[0]]['count'] += 1
+                    result[i]['count'] += 1
 
 
-        multi_bbox = 0.
-        mismatch_bbox = 0.
-        lost_bbox = 0.
-        for gt in ann:
-            if gt['count'] > 1:
-                multi_bbox += 1
-            if gt['count'] == 0:
-                lost_bbox +=1
-        for res in result:
-            if res['count'] == 0:
-                mismatch_bbox += 1
-        if len(ann) == 0:
-            if mismatch_bbox > 3:
+            multi_bbox = 0.
+            mismatch_bbox = 0.
+            lost_bbox = 0.
+            for gt in ann:
+                if gt['count'] > 1:
+                    multi_bbox += 1
+                if gt['count'] == 0:
+                    lost_bbox +=1
+            for res in result:
+                if res['count'] == 0:
+                    mismatch_bbox += 1
+            if len(ann) == 0:
+                if mismatch_bbox > 3:
+                    hard_name.append(det)
+            elif mismatch_bbox/len(ann) > 0.3 or multi_bbox/len(ann) > 0.4 or lost_bbox/len(ann) > 0.3:
                 hard_name.append(det)
-        elif mismatch_bbox/len(ann) > 0.3 or multi_bbox/len(ann) > 0.4 or lost_bbox/len(ann) > 0.3:
-            hard_name.append(det)
+        except:
+            pass
     with open('thread{}'.format(count), 'w') as f:
         f.writelines('\n'.join(hard_name))
     print('Done')
