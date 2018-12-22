@@ -77,8 +77,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/coco/coco_train_lmdb"]
-train_data_ratio = [0.95, 0.05]
+train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/hardexamples/hardexamples_train_lmdb"]
+# train_data = 'examples/hardexamples/hardexamples_train_lmdb'
+train_data_ratio = [0.7, 0.3]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -252,7 +253,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_100000.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_178000.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
@@ -265,7 +266,7 @@ normalization_mode = P.Loss.VALID
 code_type = P.PriorBox.CENTER_SIZE
 ignore_cross_boundary_bbox = False
 mining_type = P.MultiBoxLoss.MAX_NEGATIVE
-neg_pos_ratio = 9.
+neg_pos_ratio = 3.
 loc_weight = (neg_pos_ratio + 1.) / 4.
 multibox_loss_param = {
     'loc_loss_type': P.MultiBoxLoss.SMOOTH_L1,
@@ -312,13 +313,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "1,2,3"
+gpus = "3,4,5,6,7"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 78
-accum_batch_size = 78 
+batch_size = 125
+accum_batch_size = 125 
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -348,11 +349,11 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [280000, 340000, 540000],
+    'stepvalue': [120000, 240000, 340000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
-    'max_iter': 540000,
+    'max_iter': 340000,
     'snapshot': 1000,
     'display': 10,
     'average_loss': 10,
@@ -392,7 +393,7 @@ det_eval_param = {
 
 ### Hopefully you don't need to change the following ###
 # Check file.
-#check_if_exist(train_data)
+# check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
 check_if_exist(pretrain_model)
@@ -414,6 +415,7 @@ else:
         net['data'+str(count)], net['label'+str(count)] = CreateAnnotatedDataLayer(train_source, batch_size=batch_each, name='data'+str(count),
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
+        
         data.append(net['data'+str(count)])
         label.append(net['label'+str(count)])
 
