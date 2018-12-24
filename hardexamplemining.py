@@ -86,7 +86,7 @@ if __name__ == '__main__':
         img_dir = '/home/wangjilong/data/zhili_coco_posneg/' + str(i)
         im_names = os.listdir('/home/wangjilong/data/zhili_coco_posneg/Annotations')
         im_names = [x[:-5]+'.jpg' for x in im_names]
-        im_names = im_names[:70000]
+        im_names = im_names[70000:]
         total = len(im_names)
         names = []
         for count, im_name in enumerate(im_names):
