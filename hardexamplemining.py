@@ -1,54 +1,143 @@
 '''
-In this example, we will load a RefineDet model and use it to detect objects.
+@Author: Jilong Wang
+@Date: 2019-01-05 14:44:14
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@LastEditTime: 2019-03-11 18:24:46
+@Description: In this script, we will load a RefineDet model to detect pedestriancd .
 '''
+#coding:utf-8
+from __future__ import print_function
 import argparse
 import os
 import sys
 import numpy as np
 import skimage.io as io
 import cv2
-# Make sure that caffe is on the python path:
+import time
+import matplotlib.pyplot as plt
+import json
+os.environ['GLOG_minloglevel'] = '3'
+# Make sure that caffe is on the python path:x
 caffe_root = './'
 os.chdir(caffe_root)
 sys.path.insert(0, os.path.join(caffe_root, 'python'))
+import matplotlib.pyplot as plt
 import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
-import threading
-import json
 
-def ShowResults(im_name, image_file, results, save_dir, threshold=0.6, save_fig=False):
-    img = cv2.imread(image_file)
-    dets = {'results':[]}
-    for i in range(0, results.shape[0]):
-        score = results[i, -2]
-        if threshold and score < threshold:
-            continue
-        label = int(results[i, -1])
-        if label != 1:
-            continue
-        xmin = int(round(results[i, 0] * img.shape[1]))
-        ymin = int(round(results[i, 1] * img.shape[0]))
-        xmax = int(round(results[i, 2] * img.shape[1]))
-        ymax = int(round(results[i, 3] * img.shape[0]))
-        x = xmin
-        y = ymin
-        w = xmax - xmin
-        h = ymax - ymin
-        dets['results'].append({'bbox':[x, y, w, h]})
-    if save_fig:
-        if im_name == 'error.jpg':
-            return
-        with open(os.path.join(save_dir, im_name[:-4] + '_dets.json'), 'w') as f:
-            f.writelines(json.dumps(dets, sort_keys=True, indent=2, ensure_ascii=False))
-        print 'Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.json')
 
+class PeopleDetection:
+    def __init__(self, modelDeployFile,  modelWeightsFile,  gpuid=0,  threshold=0.60,  img_resize=512, batch_size=25):
+        caffe.set_device(int(gpuid))
+        caffe.set_mode_gpu()
+        self.img_resize = img_resize
+        self.batch_size = batch_size
+        self.threshold = threshold
+        self.net = None
+        self.transformer = None
+        self.net = caffe.Net(modelDeployFile, modelWeightsFile, caffe.TEST)
+
+        # detection image preprocessing
+        self.net.blobs['data'].reshape(self.batch_size, 3, img_resize, img_resize)
+        self.transformer = caffe.io.Transformer({'data': self.net.blobs['data'].data.shape})
+        self.transformer.set_transpose('data', (2, 0, 1))
+        self.transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
+        self.transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
+        self.transformer.set_channel_swap('data', (2, 1, 0))  # the reference model has channels in BGR order instead of RGB
+
+    def detect(self, img_dir):
+        print('Processing {}:'.format(img_dir))
+
+        # get all image names and sorted by name
+        im_names = os.listdir(img_dir)
+        im_names = [x.split('/')[-1][:-5]+'.jpg' for x in im_names if 'json' in x]
+
+        im_names.sort()
+        im_names = im_names[:52478]
+        frame_result = []
+        batch_size = self.batch_size
+        names = []
+        shapes = []
+        last_c = 0
+        total = len(im_names)
+        for count, im_name in enumerate(im_names):
+            image_file = os.path.join('/home/wangjilong/data/zhili_coco_posneg/ImageSet', im_name)
+            try:
+                image = caffe.io.load_image(image_file)
+            except:
+                continue
+            transformed_image = self.transformer.preprocess('data', image)
+            self.net.blobs['data'].data[(count - last_c) % batch_size, ...] = transformed_image
+            shapes.append(image.shape)
+            print(count, total)
+            names.append(im_name)
+            if (count + 1 - last_c) % batch_size == 0:
+                last_c = count + 1
+                detections = self.net.forward()['detection_out']
+                for i in range(batch_size):
+                    det_label = detections[0, 0, 500*i:500*(i+1), 1]
+                    det_conf = detections[0, 0, 500*i:500*(i+1), 2]
+                    det_xmin = detections[0, 0, 500*i:500*(i+1), 3]
+                    det_ymin = detections[0, 0, 500*i:500*(i+1), 4]
+                    det_xmax = detections[0, 0, 500*i:500*(i+1), 5]
+                    det_ymax = detections[0, 0, 500*i:500*(i+1), 6]
+
+                    # print('processing {}'.format(names[i]), end='')
+                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
+                    frame_result.append((names[i], result, shapes[i]))
+                names = []
+                shapes = []
+                # change batch_size when there is no enough images to fill initial batch_size
+                if len(im_names) - count <= batch_size:
+                    batch_size = len(im_names) - count - 1
+        print('Detection done! Total:{} frames'.format(len(frame_result)))
+        self.frame_result = frame_result
+
+    def save_results(self, save_dir):
+        for im_name, results, shape in self.frame_result:
+            annotations = []
+            for i in range(0, results.shape[0]):
+                score = results[i, -2]
+                if self.threshold and score < self.threshold:
+                    continue
+                label = int(results[i, -1])
+                if label != 1:
+                    continue
+                name = str(label)
+                xmin = int(round(results[i, 0] * shape[1]))
+                ymin = int(round(results[i, 1] * shape[0]))
+                xmax = int(round(results[i, 2] * shape[1]))
+                ymax = int(round(results[i, 3] * shape[0]))
+                annotations.append({'bbox': [xmin, ymin, xmax, ymax]})
+            with open(os.path.join(save_dir, im_name[:-4]+'_dets.json'), 'w') as f:
+                json.dump(annotations, f, indent=2)
+                print('Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.json'))
+
+    def get_output(self, img_dir, save_dir):
+        self.detect(img_dir)
+        self.save_results(save_dir)
+
+
+def net_init(batch_size, gpuid=0):
+    '''
+    @description: load detection & openpose & segementation models
+    @param {None} 
+    @return: three instances of det_net, op_net, seg_net
+    '''
+    # load detection model
+    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_340000.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.20)
+
+    return det_net
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
     parser.add_argument("--gpuid",
         help = "The gpu chosen to run the model.", required=True)
-    parser.add_argument("--out-dir",
+    parser.add_argument("--save-dir",
         help = "The output directory where we store the result.", required=True)
     parser.add_argument("--test-set", 
         help = "which sets your wanna run test.", required=True)
@@ -56,65 +145,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # gpu preparation
     assert len(args.gpuid) == 1, "You only need to choose one gpu. But {} gpus are chosen.".format(args.gpuid)
-    caffe.set_device(int(args.gpuid))
-    caffe.set_mode_gpu()
-
     
-    save_dir = args.out_dir
+    save_dir = args.save_dir
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
-    # load model
-    model_def = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    model_weights = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_178000.caffemodel'
-    net = caffe.Net(model_def, model_weights, caffe.TEST)
+    img_dir = args.test_set
+    if not os.path.exists(img_dir):
+        print("{} doesn't exists".format(img_dir))
+        sys.exit(0)
 
-    # image preprocessing
-    img_resize = 1024
-    batch_size = 50
-    net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-    transformer.set_transpose('data', (2, 0, 1))
-    transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
-    transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
-    transformer.set_channel_swap('data', (2, 1, 0))  # the reference model has channels in BGR order instead of RGB
-
-    test_set = args.test_set
-    test_set = test_set.split(',')
-    for i in test_set:
-        print('/home/wangjilong/data/zhili_coco_posneg/{}'.format(i))
-        img_dir = '/home/wangjilong/data/zhili_coco_posneg/' + str(i)
-        im_names = os.listdir('/home/wangjilong/data/zhili_coco_posneg/Annotations')
-        im_names = [x[:-5]+'.jpg' for x in im_names]
-        im_names = im_names[70000:]
-        total = len(im_names)
-        names = []
-        for count, im_name in enumerate(im_names):
-            if total - count < batch_size:
-                batch_size = total - count
-                net.blobs['data'].reshape(batch_size, 3, img_resize, img_resize)
-            image_file = os.path.join(img_dir, im_name)
-            try:
-                image = caffe.io.load_image(image_file)
-                transformed_image = transformer.preprocess('data', image)
-                names.append(im_name)
-                net.blobs['data'].data[count % batch_size, ...] = transformed_image
-            except:
-                names.append('error.jpg')
-                net.blobs['data'].data[count % batch_size, ...] = np.zeros((1, 3, img_resize, img_resize))
-
-            if (count + 1) % batch_size == 0:
-                print("Processing {}/{}: ".format(count + 1, total))
-                detections = net.forward()['detection_out']
-                print(detections.shape)
-                for j in range(batch_size):
-                    det_label = detections[0, 0, 500*j:500*(j+1), 1]
-                    det_conf = detections[0, 0, 500*j:500*(j+1), 2]
-                    det_xmin = detections[0, 0, 500*j:500*(j+1), 3]
-                    det_ymin = detections[0, 0, 500*j:500*(j+1), 4]
-                    det_xmax = detections[0, 0, 500*j:500*(j+1), 5]
-                    det_ymax = detections[0, 0, 500*j:500*(j+1), 6]
-                    result = np.column_stack([det_xmin, det_ymin, det_xmax, det_ymax, det_conf, det_label])
-                    # show result
-                    ShowResults(names[j], os.path.join(img_dir, names[j]), result, save_dir, 0.40, save_fig=True)
-                names = []
+    det = net_init(50, gpuid=args.gpuid)
+    det.get_output(img_dir, save_dir)

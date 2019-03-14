@@ -3,7 +3,7 @@ import json
 import os
 import threading
 import shutil
-
+from tqdm import tqdm
 def compute_iou(rec1, rec2):
     one_x, one_y, one_w, one_h = rec1
     two_x, two_y, two_w, two_h = rec2
@@ -27,13 +27,12 @@ def compute_iou(rec1, rec2):
 
 def find_hard(det_names, count):
     hard_name = []
-    for det in det_names:
+    for det in tqdm(det_names):
         det_file = os.path.join(det_dir, det)
         ann_file = os.path.join(ann_dir, det[:-10]+'.json')
         try:
             ann = json.load(open(ann_file, 'r'))
             result = json.load(open(det_file, 'r'))
-            result = result['results']
             ann = ann['annotation']
 
             for res in result:
@@ -43,7 +42,7 @@ def find_hard(det_names, count):
                     
             for i in range(len(result)):
                 bbox2 = result[i]['bbox']
-                rect2 = [bbox2[0], bbox2[1], bbox2[2], bbox2[3]]
+                rect2 = [bbox2[0], bbox2[1], bbox2[2]-bbox2[0], bbox2[3]-bbox2[1]]
                 max_iou = (-1, 0)
                 for j in range(len(ann)):
                     bbox = ann[j]['bbox']
@@ -69,7 +68,7 @@ def find_hard(det_names, count):
             if len(ann) == 0:
                 if mismatch_bbox > 3:
                     hard_name.append(det)
-            elif mismatch_bbox/len(ann) > 0.1 or multi_bbox/len(ann) > 0.1 or lost_bbox/len(ann) > 0.1:
+            elif float(mismatch_bbox)/len(ann) > 0.55 or float(multi_bbox)/len(ann) > 0.55 or float(lost_bbox)/len(ann) > 0.55:
                 hard_name.append(det)
         except:
             pass
@@ -79,10 +78,8 @@ def find_hard(det_names, count):
 
 
 if __name__ == "__main__":
-    img_dir = '/home/wangjilong/data/zhili_coco_posneg/ImageSet'
     ann_dir = '/home/wangjilong/data/zhili_coco_posneg/Annotations'
-    hard_dir = '/home/wangjilong/data/hardexamples'
-    det_dir = './detout'
+    det_dir = './hardresult'
     det_name = os.listdir(det_dir)
     threads = []
     for j, i in enumerate(range(0, len(det_name), 10000)):

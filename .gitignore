@@ -20,3 +20,7 @@ detout/*
 # Video files
 *.mp4
 *.avi
+
+#output file
+detout/*
+hardresult/*
