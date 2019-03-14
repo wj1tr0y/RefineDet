@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-14 13:53:07
+@LastEditTime: 2019-03-14 13:55:30
 '''
 from __future__ import print_function
 import sys
@@ -263,7 +263,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_final1.caffemodel"
+pretrain_model = "models/coco_refinedet_resnet18_addneg_final1.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
