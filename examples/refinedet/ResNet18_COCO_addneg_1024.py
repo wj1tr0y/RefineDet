@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-03-14 13:47:20
+@LastEditTime: 2019-03-14 13:47:56
+'''
 from __future__ import print_function
 import sys
 sys.path.append("./python")
@@ -77,9 +87,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/hardexamples/hardexamples_train_lmdb"]
+train_data = ["examples/coco/coco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newpad_train_lmdb"]
 # train_data = 'examples/hardexamples/hardexamples_train_lmdb'
-train_data_ratio = [0.7, 0.3]
+train_data_ratio = [0.6, 0.2, 0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -253,7 +263,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_178000.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_340000.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
 
@@ -313,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "3,4,5,6,7"
+gpus = "0"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 125
-accum_batch_size = 125 
+batch_size = 25
+accum_batch_size = 25 
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
