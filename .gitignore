@@ -4,6 +4,7 @@ jobs/*
 test/*
 *result*
 detout/*
+.build_release/*
 # ignore all pyc
 *.pyc
 
