@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-03-15 15:09:00
+@LastEditTime: 2019-03-15 15:11:58
+'''
 from __future__ import print_function
 import sys
 sys.path.append("./python")
@@ -77,11 +87,11 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/hardexamples/hardexamples_train_lmdb"]
-# train_data = 'examples/hardexamples/hardexamples_train_lmdb'
+# train_data = ["examples/zhili_coco_posneg/zhili_coco_posneg_train_lmdb", "examples/hardexamples/hardexamples_train_lmdb"]
+train_data = 'examples/coco/coco_80_train_lmdb'
 train_data_ratio = [0.7, 0.3]
 # The database file for testing data. Created by data/coco/create_data.sh
-test_data = "examples/coco/coco_val_lmdb"
+test_data = "examples/coco/coco_80_val_lmdb"
 # Specify the batch sampler.
 resize_width = 1024
 resize_height = 1024
@@ -227,7 +237,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet18_addneg_{}".format(resize)
+job_name = "refinedet_resnet18_80_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -253,12 +263,12 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_178000.caffemodel"
+# pretrain_model = "models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_178000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
+label_map_file = "data/coco/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
-num_classes = 2
+num_classes = 81
 share_location = True
 background_label_id = 0
 train_on_diff_gt = False
@@ -313,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "3,4,5,6,7"
+gpus = "0,1"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 125
-accum_batch_size = 125 
+batch_size = 50
+accum_batch_size = 50 
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -396,7 +406,7 @@ det_eval_param = {
 # check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+# check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -564,7 +574,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)

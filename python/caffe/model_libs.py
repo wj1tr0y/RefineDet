@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-03-15 15:04:39
+@LastEditTime: 2019-03-15 15:08:14
+'''
 import os
 
 import caffe
@@ -1381,7 +1391,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         if inter_layer_depth:
             if inter_layer_depth[i] > 0:
                 inter_name = "{}_inter".format(from_layer)
-                ResidualBlock(net, from_layer, inter_name, out2a=64, out2b=64, stride=1, use_branch1=True)
+                ResidualBlock(net, from_layer, inter_name, out2a=128, out2b=256, stride=1, use_branch1=True)
                 # ConvBNLayer(net, from_layer, inter_name, use_bn=use_batchnorm, use_relu=True, lr_mult=lr_mult,
                 #       num_output=inter_layer_depth[i], kernel_size=3, pad=1, stride=1, **bn_param)
                 from_layer = "res{}".format(inter_name)
@@ -1486,7 +1496,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         if inter_layer_depth:
             if inter_layer_depth[i] > 0:
                 inter_name = "{}_inter".format(from_layer)
-                ResidualBlock(net, from_layer, inter_name, out2a=64, out2b=64, stride=1, use_branch1=True)
+                ResidualBlock(net, from_layer, inter_name, out2a=128, out2b=256, stride=1, use_branch1=True)
                 # ConvBNLayer(net, from_layer, inter_name, use_bn=use_batchnorm, use_relu=True, lr_mult=lr_mult,
                 #       num_output=inter_layer_depth[i], kernel_size=3, pad=1, stride=1, **bn_param)
                 # from_layer = inter_name
@@ -1516,7 +1526,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
             num_priors_per_location += len(aspect_ratio) * len(min_size)
 
         # Create location prediction layer.
-        name = "{}_mbox_loc{}".format(from_layer, loc_postfix)
+        name = "{}_mbox_loc_80{}".format(from_layer, loc_postfix)
         num_loc_output = num_priors_per_location * 4
         if not share_location:
             num_loc_output *= num_classes
@@ -1529,7 +1539,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         loc_layers.append(net[flatten_name])
 
         # Create confidence prediction layer.
-        name = "{}_mbox_conf_ft{}".format(from_layer, conf_postfix)
+        name = "{}_mbox_conf_ft_80{}".format(from_layer, conf_postfix)
         num_conf_output = num_priors_per_location * num_classes
         ConvBNLayer(net, from_layer, name, use_bn=use_batchnorm, use_relu=False, lr_mult=lr_mult,
                     num_output=num_conf_output, kernel_size=kernel_size, pad=pad, stride=1, **bn_param)
@@ -1541,10 +1551,10 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
 
 
     # Concatenate priorbox, loc, and conf layers.
-    name = '{}{}'.format(prefix, "_loc")
+    name = '{}{}'.format(prefix, "_loc_80")
     net[name] = L.Concat(*loc_layers, axis=1)
     mbox_layers.append(net[name])
-    name = '{}{}'.format(prefix, "_conf_ft")
+    name = '{}{}'.format(prefix, "_conf_ft_80")
     net[name] = L.Concat(*conf_layers, axis=1)
     mbox_layers.append(net[name])
 
