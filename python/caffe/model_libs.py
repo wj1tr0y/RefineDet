@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-03-15 15:34:18
+@LastEditTime: 2019-03-15 15:58:28
 '''
 import os
 
@@ -1391,7 +1391,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         if inter_layer_depth:
             if inter_layer_depth[i] > 0:
                 inter_name = "{}_inter".format(from_layer)
-                ResidualBlock(net, from_layer, inter_name, out2a=128, out2b=128, stride=1, use_branch1=True)
+                ResidualBlock(net, from_layer, inter_name, out2a=64, out2b=64, stride=1, use_branch1=True)
                 # ConvBNLayer(net, from_layer, inter_name, use_bn=use_batchnorm, use_relu=True, lr_mult=lr_mult,
                 #       num_output=inter_layer_depth[i], kernel_size=3, pad=1, stride=1, **bn_param)
                 from_layer = "res{}".format(inter_name)
@@ -1496,7 +1496,7 @@ def CreateRefineDetHead(net, data_layer="data", num_classes=[], from_layers=[], 
         if inter_layer_depth:
             if inter_layer_depth[i] > 0:
                 inter_name = "{}_inter".format(from_layer)
-                ResidualBlock(net, from_layer, inter_name, out2a=128, out2b=128, stride=1, use_branch1=True)
+                ResidualBlock(net, from_layer, inter_name, out2a=64, out2b=64, stride=1, use_branch1=True)
                 # ConvBNLayer(net, from_layer, inter_name, use_bn=use_batchnorm, use_relu=True, lr_mult=lr_mult,
                 #       num_output=inter_layer_depth[i], kernel_size=3, pad=1, stride=1, **bn_param)
                 # from_layer = inter_name
