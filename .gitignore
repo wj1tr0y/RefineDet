@@ -5,6 +5,8 @@ test/*
 *result*
 detout/*
 .build_release/*
+.ipynb_checkpoints/*
+*.ipynb
 # ignore all pyc
 *.pyc
 
