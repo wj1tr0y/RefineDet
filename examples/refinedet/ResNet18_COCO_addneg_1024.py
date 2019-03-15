@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-14 14:02:16
+@LastEditTime: 2019-03-15 16:00:29
 '''
 from __future__ import print_function
 import sys
@@ -31,32 +31,32 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     from_layer = last_layer
 
     # 512/64: 8 x 8
-    ResidualBlock(net, from_layer, '6', out2a=64, out2b=64, stride=2, use_branch1=True)
+    ResidualBlock(net, from_layer, '6', out2a=128, out2b=128, stride=2, use_branch1=True)
 
     arm_source_layers.reverse()
     num_p = 6
     for index, layer in enumerate(arm_source_layers):
         from_layer = layer
         out_layer = "TL{}_{}".format(num_p, 1)
-        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
         if num_p == 6:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
 
         else:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 64, 3, 1, 1)
 
             from_layer = "P{}".format(num_p+1)
             out_layer = "P{}-up".format(num_p+1)
-            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 2, 0, 2)
+            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 64, 2, 0, 2)
 
             from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
             out_layer = "Elt{}".format(num_p)
@@ -67,7 +67,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 64, 3, 1, 1)
         num_p = num_p - 1
 
     return net

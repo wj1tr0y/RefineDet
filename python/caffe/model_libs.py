@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-03-15 15:04:39
+@LastEditTime: 2019-03-15 15:59:07
+'''
 import os
 
 import caffe
