@@ -7,3 +7,19 @@ W0327 15:15:07.579691 16513 io.cpp:444] /home/wangjilong/data/zhili/Annotations/
 I0327 15:17:04.590220 16513 convert_annoset.cpp:195] Processed 2000 files.
 I0327 15:19:27.761291 16513 convert_annoset.cpp:195] Processed 3000 files.
 I0327 15:21:31.314606 16513 convert_annoset.cpp:195] Processed 4000 files.
+I0327 15:23:36.425627 16513 convert_annoset.cpp:195] Processed 5000 files.
+I0327 15:25:51.017724 16513 convert_annoset.cpp:195] Processed 6000 files.
+I0327 15:28:11.960111 16513 convert_annoset.cpp:195] Processed 7000 files.
+I0327 15:30:29.115123 16513 convert_annoset.cpp:195] Processed 8000 files.
+I0327 15:32:30.250723 16513 convert_annoset.cpp:195] Processed 9000 files.
+W0327 15:34:19.102692 16513 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130426199708142318_M_000_coatgo.json bounding box exceeds image boundary.
+I0327 15:34:49.236258 16513 convert_annoset.cpp:195] Processed 10000 files.
+I0327 15:37:04.944866 16513 convert_annoset.cpp:195] Processed 11000 files.
+I0327 15:39:07.201442 16513 convert_annoset.cpp:195] Processed 12000 files.
+W0327 15:39:41.715883 16513 io.cpp:444] /home/wangjilong/data/zhili/Annotations/622424199509062839_M_000_coatreturn.json bounding box exceeds image boundary.
+I0327 15:41:14.626083 16513 convert_annoset.cpp:195] Processed 13000 files.
+I0327 15:43:20.327349 16513 convert_annoset.cpp:195] Processed 14000 files.
+W0327 15:43:38.582954 16513 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130281199801130518_M_000_coatgo.json bounding box exceeds image boundary.
+I0327 15:45:33.251001 16513 convert_annoset.cpp:195] Processed 15000 files.
+I0327 15:46:04.064219 16513 convert_annoset.cpp:201] Processed 15170 files.
+/home/wangjilong/pedestrian/RefineDet/build/tools/convert_annoset --anno_type=detection --label_type=json --label_map_file=/home/wangjilong/pedestrian/RefineDet/data/zhili/../../data/zhili/labelmap_coco.prototxt --check_label=True --min_dim=0 --max_dim=0 --resize_height=0 --resize_width=0 --backend=lmdb --shuffle=False --check_size=False --encode_type=jpg --encoded=True --gray=False /home/wangjilong/data/zhili/ /home/wangjilong/pedestrian/RefineDet/data/zhili/../../data/zhili/train.txt /home/wangjilong/data/zhili/lmdb/zhili_train_lmdb
