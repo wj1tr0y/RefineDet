@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-27 15:20:04
-@LastEditTime: 2019-03-27 15:25:20
+@LastEditTime: 2019-03-27 15:30:02
 '''
 from __future__ import print_function
 import sys
@@ -556,7 +556,7 @@ for file in os.listdir(snapshot_dir):
     if iter > max_iter:
       max_iter = iter
 
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
