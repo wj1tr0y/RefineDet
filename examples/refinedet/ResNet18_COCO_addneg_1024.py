@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-15 16:15:06
+@LastEditTime: 2019-03-27 16:09:46
 '''
 from __future__ import print_function
 import sys
@@ -89,7 +89,7 @@ remove_old_models = False
 # The database file for training data. Created by data/coco/create_data.sh
 train_data = ["examples/coco/coco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
 # train_data = 'examples/hardexamples/hardexamples_train_lmdb'
-train_data_ratio = [0.6, 0.2, 0.2]
+train_data_ratio = [0.5, 0.3, 0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
