@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-27 16:12:37
+@LastEditTime: 2019-03-27 16:15:05
 '''
 from __future__ import print_function
 import sys
@@ -31,7 +31,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     from_layer = last_layer
 
     # 512/64: 8 x 8
-    ResidualBlock(net, from_layer, '6', out2a=256, out2b=256, stride=2, use_branch1=True)
+    ResidualBlock(net, from_layer, '6', out2a=64, out2b=64, stride=2, use_branch1=True)
 
     arm_source_layers.reverse()
     num_p = 6
