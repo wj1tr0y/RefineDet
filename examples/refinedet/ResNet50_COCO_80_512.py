@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-27 15:20:04
-@LastEditTime: 2019-03-27 15:36:20
+@LastEditTime: 2019-03-27 15:37:48
 '''
 from __future__ import print_function
 import sys
@@ -326,8 +326,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 20
-accum_batch_size = 20
+batch_size = 16
+accum_batch_size = 16
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
