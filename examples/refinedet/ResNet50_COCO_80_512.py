@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-27 15:20:04
-@LastEditTime: 2019-03-27 15:21:33
+@LastEditTime: 2019-03-27 15:25:20
 '''
 from __future__ import print_function
 import sys
@@ -500,7 +500,7 @@ flatten_name = "{}_flatten".format(conf_name)
 net[flatten_name] = L.Flatten(net[softmax_name], axis=1)
 mbox_layers_out[3] = net[flatten_name]
 
-conf_name = "odm_conf"
+conf_name = "odm_conf_ft_80"
 reshape_name = "{}_reshape".format(conf_name)
 net[reshape_name] = L.Reshape(net[conf_name], shape=dict(dim=[0, -1, num_classes]))
 softmax_name = "{}_softmax".format(conf_name)
