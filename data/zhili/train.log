@@ -1,32 +1,9 @@
-I1122 13:11:40.282372 34571 convert_annoset.cpp:122] A total of 19737 images.
-I1122 13:11:40.300284 34571 db_lmdb.cpp:35] Opened lmdb /home/wangjilong/data/zhili/lmdb/zhili_train_lmdb
-W1122 13:11:57.880529 34571 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130524199804014511_M_000_shirtgo.json bounding box exceeds image boundary.
-W1122 13:12:10.155746 34571 io.cpp:442] /home/wangjilong/data/zhili/Annotations/I00417.json bounding box exceeds image boundary.
-I1122 13:12:50.868577 34571 convert_annoset.cpp:195] Processed 1000 files.
-I1122 13:14:02.604471 34571 convert_annoset.cpp:195] Processed 2000 files.
-W1122 13:14:17.116663 34571 io.cpp:444] /home/wangjilong/data/zhili/Annotations/C0708_MP43978.json bounding box exceeds image boundary.
-I1122 13:15:19.355903 34571 convert_annoset.cpp:195] Processed 3000 files.
-I1122 13:16:39.734635 34571 convert_annoset.cpp:195] Processed 4000 files.
-W1122 13:17:21.833725 34571 io.cpp:377] /home/wangjilong/data/zhili/Annotations/body_jxd_170417_313.json inconsistent image height.
-W1122 13:17:21.833828 34571 io.cpp:379] /home/wangjilong/data/zhili/Annotations/body_jxd_170417_313.json inconsistent image width.
-I1122 13:18:04.979746 34571 convert_annoset.cpp:195] Processed 5000 files.
-I1122 13:19:31.368306 34571 convert_annoset.cpp:195] Processed 6000 files.
-W1122 13:20:42.815723 34571 io.cpp:444] /home/wangjilong/data/zhili/Annotations/622424199509062839_M_000_coatreturn.json bounding box exceeds image boundary.
-I1122 13:20:56.923274 34571 convert_annoset.cpp:195] Processed 7000 files.
-I1122 13:22:20.103374 34571 convert_annoset.cpp:195] Processed 8000 files.
-I1122 13:23:45.993382 34571 convert_annoset.cpp:195] Processed 9000 files.
-I1122 13:25:12.370484 34571 convert_annoset.cpp:195] Processed 10000 files.
-W1122 13:25:37.513221 34571 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130281199801130518_M_000_coatgo.json bounding box exceeds image boundary.
-W1122 13:26:06.348609 34571 io.cpp:450] /home/wangjilong/data/zhili/Annotations/04_009.json bounding box irregular.
-I1122 13:26:42.386396 34571 convert_annoset.cpp:195] Processed 11000 files.
-I1122 13:28:09.014492 34571 convert_annoset.cpp:195] Processed 12000 files.
-I1122 13:29:36.083628 34571 convert_annoset.cpp:195] Processed 13000 files.
-I1122 13:31:03.667501 34571 convert_annoset.cpp:195] Processed 14000 files.
-I1122 13:32:26.185036 34571 convert_annoset.cpp:195] Processed 15000 files.
-I1122 13:33:53.620566 34571 convert_annoset.cpp:195] Processed 16000 files.
-I1122 13:35:21.063856 34571 convert_annoset.cpp:195] Processed 17000 files.
-I1122 13:36:49.912884 34571 convert_annoset.cpp:195] Processed 18000 files.
-I1122 13:38:14.010092 34571 convert_annoset.cpp:195] Processed 19000 files.
-W1122 13:38:22.914183 34571 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130426199708142318_M_000_coatgo.json bounding box exceeds image boundary.
-I1122 13:39:18.635898 34571 convert_annoset.cpp:201] Processed 19737 files.
-/home/wangjilong/pedestrian/RefineDet/build/tools/convert_annoset --anno_type=detection --label_type=json --label_map_file=/home/wangjilong/pedestrian/RefineDet/data/zhili/../../data/zhili/labelmap_coco.prototxt --check_label=True --min_dim=0 --max_dim=0 --resize_height=0 --resize_width=0 --backend=lmdb --shuffle=False --check_size=False --encode_type=jpg --encoded=True --gray=False /home/wangjilong/data/zhili/ /home/wangjilong/pedestrian/RefineDet/data/zhili/../../data/zhili/train.txt /home/wangjilong/data/zhili/lmdb/zhili_train_lmdb
+I0327 15:10:10.140354 16513 convert_annoset.cpp:122] A total of 15170 images.
+I0327 15:10:10.144207 16513 db_lmdb.cpp:35] Opened lmdb /home/wangjilong/data/zhili/lmdb/zhili_train_lmdb
+W0327 15:14:03.546169 16513 io.cpp:450] /home/wangjilong/data/zhili/Annotations/04_009.json bounding box irregular.
+W0327 15:14:40.153223 16513 io.cpp:442] /home/wangjilong/data/zhili/Annotations/I00417.json bounding box exceeds image boundary.
+I0327 15:14:55.220656 16513 convert_annoset.cpp:195] Processed 1000 files.
+W0327 15:15:07.579691 16513 io.cpp:444] /home/wangjilong/data/zhili/Annotations/130524199804014511_M_000_shirtgo.json bounding box exceeds image boundary.
+I0327 15:17:04.590220 16513 convert_annoset.cpp:195] Processed 2000 files.
+I0327 15:19:27.761291 16513 convert_annoset.cpp:195] Processed 3000 files.
+I0327 15:21:31.314606 16513 convert_annoset.cpp:195] Processed 4000 files.
