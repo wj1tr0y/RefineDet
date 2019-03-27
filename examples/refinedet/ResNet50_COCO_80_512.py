@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-27 15:20:04
-@LastEditTime: 2019-03-27 15:30:02
+@LastEditTime: 2019-03-27 15:34:26
 '''
 from __future__ import print_function
 import sys
@@ -235,7 +235,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet101_{}".format(resize)
+job_name = "refinedet_resnet50_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
