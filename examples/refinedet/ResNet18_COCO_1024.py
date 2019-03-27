@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-27 16:11:50
+@LastEditTime: 2019-03-27 16:12:37
 '''
 from __future__ import print_function
 import sys
@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0"
+gpus = "4,7"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 25
-accum_batch_size = 25 
+batch_size = 50
+accum_batch_size = 50
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
