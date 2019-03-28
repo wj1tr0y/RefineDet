@@ -34,11 +34,11 @@ if redo or not os.path.exists(train_list_file):
             for line in f.readlines():
                 name = line.strip("\n")
                 img_file = "{}/{}.{}".format(imgset_dir, name, img_ext)
-                assert os.path.exists("{}/{}".format(data_dir, img_file)), \
-                        "{}/{} does not exist".format(data_dir, img_file)
+                #assert os.path.exists("{}/{}".format(data_dir, img_file)), \
+                #        "{}/{} does not exist".format(data_dir, img_file)
                 anno_file = "{}/{}.{}".format(anno_dir, name, anno_ext)
-                assert os.path.exists("{}/{}".format(data_dir, anno_file)), \
-                        "{}/{} does not exist".format(data_dir, anno_file)
+                #assert os.path.exists("{}/{}".format(data_dir, anno_file)), \
+                #        "{}/{} does not exist".format(data_dir, anno_file)
                 img_files.append(img_file)
                 anno_files.append(anno_file)
     # Shuffle the images.
