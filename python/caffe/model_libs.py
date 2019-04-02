@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-02 18:47:22
+@LastEditTime: 2019-04-02 18:51:40
 '''
 import os
 
@@ -279,7 +279,7 @@ def DepthwiseResidualBlock(net, from_layer, block_name, input_channel, out2a, ou
 
     if use_branch1:
         branch_name = 'branch1'
-        DepthwiseConvBNLayer(net, from_layer, branch_name, use_bn=True, use_relu=False,
+        ConvBNLayer(net, from_layer, branch_name, use_bn=True, use_relu=False,
             num_output=out2b, kernel_size=1, pad=0, stride=stride, use_scale=use_scale,
             conv_prefix=conv_prefix, conv_postfix=conv_postfix,
             bn_prefix=bn_prefix, bn_postfix=bn_postfix,
@@ -298,7 +298,7 @@ def DepthwiseResidualBlock(net, from_layer, block_name, input_channel, out2a, ou
     out_name = '{}{}'.format(conv_prefix, branch_name)
 
     branch_name = 'branch2a'
-    DepthwiseConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
+    ConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
         num_output=out2a, kernel_size=1, pad=0, stride=1, use_scale=use_scale,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
@@ -316,7 +316,7 @@ def DepthwiseResidualBlock(net, from_layer, block_name, input_channel, out2a, ou
     out_name = '{}{}'.format(conv_prefix, branch_name)
 
     branch_name = 'branch2b'
-    DepthwiseConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
+    ConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
         num_output=out2b, kernel_size=1, pad=0, stride=1, use_scale=use_scale,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
