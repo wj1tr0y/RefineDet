@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-03-15 15:59:07
+@LastEditTime: 2019-04-02 16:41:52
 '''
 import os
 
@@ -862,6 +862,57 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
       net.pool5 = L.Pooling(net.res5b, pool=P.Pooling.AVE, global_pooling=True)
 
     return net
+
+def ResNet50Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn_param):
+    conv_prefix = ''
+    conv_postfix = ''
+    bn_prefix = 'bn_'
+    bn_postfix = ''
+    scale_prefix = 'scale_'
+    scale_postfix = ''
+    ConvBNLayer(net, from_layer, 'conv1', use_bn=True, use_relu=True,
+        num_output=64, kernel_size=7, pad=3, stride=2,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool1 = L.Pooling(net.conv1, pool=P.Pooling.MAX, kernel_size=3, stride=2)
+
+    ResBody(net, 'pool1', '2a', out2a=64, out2b=64, out2c=256, stride=1, use_branch1=True, **bn_param)
+    ResBody(net, 'res2a', '2b', out2a=64, out2b=64, out2c=256, stride=1, use_branch1=False, **bn_param)
+    ResBody(net, 'res2b', '2c', out2a=64, out2b=64, out2c=256, stride=1, use_branch1=False, **bn_param)
+
+    ResBody(net, 'res2c', '3a', out2a=128, out2b=128, out2c=512, stride=2, use_branch1=True, **bn_param)
+
+    from_layer = 'res3a'
+    for i in xrange(1, 4):
+      block_name = '3b{}'.format(i)
+      ResBody(net, from_layer, block_name, out2a=128, out2b=128, out2c=512, stride=1, use_branch1=False, **bn_param)
+      from_layer = 'res{}'.format(block_name)
+
+    ResBody(net, from_layer, '4a', out2a=256, out2b=256, out2c=1024, stride=2, use_branch1=True, **bn_param)
+
+    from_layer = 'res4a'
+    for i in xrange(1, 6):
+      block_name = '4b{}'.format(i)
+      ResBody(net, from_layer, block_name, out2a=256, out2b=256, out2c=1024, stride=1, use_branch1=False, **bn_param)
+      from_layer = 'res{}'.format(block_name)
+
+    stride = 2
+    dilation = 1
+    if use_dilation_conv5:
+      stride = 1
+      dilation = 2
+
+    ResBody(net, from_layer, '5a', out2a=512, out2b=512, out2c=2048, stride=stride, use_branch1=True, dilation=dilation, **bn_param)
+    ResBody(net, 'res5a', '5b', out2a=512, out2b=512, out2c=2048, stride=1, use_branch1=False, dilation=dilation, **bn_param)
+    ResBody(net, 'res5b', '5c', out2a=512, out2b=512, out2c=2048, stride=1, use_branch1=False, dilation=dilation, **bn_param)
+
+    if use_pool5:
+      net.pool5 = L.Pooling(net.res5c, pool=P.Pooling.AVE, global_pooling=True)
+
+    return net
+
 
 def ResNet101Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn_param):
     conv_prefix = ''
