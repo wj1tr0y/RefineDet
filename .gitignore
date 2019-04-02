@@ -3,7 +3,8 @@ models/*
 jobs/*
 test/*
 *result*
-detout/*
+.build_release/*
+build
 # ignore all pyc
 *.pyc
 
