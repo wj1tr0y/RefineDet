@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-02 16:41:52
+@LastEditTime: 2019-04-02 18:05:37
 '''
 import os
 
@@ -176,6 +176,68 @@ def DeconvBNLayer(net, from_layer, out_layer, use_bn, use_relu, num_output,
 def EltwiseLayer(net, from_layer, out_layer):
   elt_name = out_layer
   net[elt_name] = L.Eltwise(net[from_layer[0]], net[from_layer[1]])
+
+def DepthwiseResidualBlock(net, from_layer, block_name, input_channel, out2a, out2b, stride, use_branch1, dilation=1, **bn_param):
+    conv_prefix = 'res{}_'.format(block_name)
+    conv_postfix = ''
+    bn_prefix = 'bn{}_'.format(block_name)
+    bn_postfix = ''
+    scale_prefix = 'scale{}_'.format(block_name)
+    scale_postfix = ''
+    use_scale = True
+
+    if use_branch1:
+        branch_name = 'branch1'
+        ConvBNLayer(net, from_layer, branch_name, use_bn=True, use_relu=False,
+            num_output=out2b, kernel_size=1, pad=0, stride=stride, use_scale=use_scale,
+            conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+            bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+            scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+        branch1 = '{}{}'.format(conv_prefix, branch_name)
+    else:
+        branch1 = from_layer
+
+    branch_name = 'branch2a_3x3'
+    ConvBNLayer(net, from_layer, branch_name, use_bn=True, use_relu=True,
+        num_output=input_channel, kernel_size=3, pad=1, stride=stride, use_scale=use_scale,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+    
+    out_name = '{}{}'.format(conv_prefix, branch_name)
+
+    branch_name = 'branch2a'
+    ConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
+        num_output=out2a, kernel_size=1, pad=0, stride=1, use_scale=use_scale,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+    
+    out_name = '{}{}'.format(conv_prefix, branch_name)
+
+    branch_name = 'branch2b_3x3'
+    ConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
+        num_output=out2a, kernel_size=3, pad=1, stride=1, use_scale=use_scale,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+    
+    out_name = '{}{}'.format(conv_prefix, branch_name)
+
+    branch_name = 'branch2b'
+    ConvBNLayer(net, out_name, branch_name, use_bn=True, use_relu=True,
+        num_output=out2b, kernel_size=1, pad=0, stride=1, use_scale=use_scale,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+    
+    branch2 = '{}{}'.format(conv_prefix, branch_name)
+
+    res_name = 'res{}'.format(block_name)
+    net[res_name] = L.Eltwise(net[branch1], net[branch2])
+    relu_name = '{}_relu'.format(res_name)
+    net[relu_name] = L.ReLU(net[res_name], in_place=True)
+
 
 # for resnet18
 def ResidualBlock(net, from_layer, block_name, out2a, out2b, stride, use_branch1, dilation=1, **bn_param):
@@ -832,7 +894,7 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
     bn_postfix = ''
     scale_prefix = 'scale_'
     scale_postfix = ''
-    ConvBNLayer(net, from_layer, 'conv1', use_bn=True, use_relu=True,
+    ConvBNLayer(net, from_layer, 'conv1', use_bn=True, use_relu=True, input_channel=3,
         num_output=32, kernel_size=7, pad=3, stride=4,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
@@ -840,14 +902,14 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
 
     net.pool1 = L.Pooling(net.conv1, pool=P.Pooling.MAX, kernel_size=3, stride=2)
 
-    ResidualBlock(net, 'pool1', '2a', out2a=32, out2b=32, stride=1, use_branch1=True, **bn_param)
-    ResidualBlock(net, 'res2a', '2b', out2a=32, out2b=32, stride=1, use_branch1=False, **bn_param)
+    DepthwiseResidualBlock(net, 'pool1', '2a', input_channel=32, out2a=32, out2b=32, stride=1, use_branch1=True, **bn_param)
+    DepthwiseResidualBlock(net, 'res2a', '2b', input_channel=32, out2a=32, out2b=32, stride=1, use_branch1=False, **bn_param)
 
-    ResidualBlock(net, 'res2b', '3a', out2a=64, out2b=64, stride=2, use_branch1=True, **bn_param)
-    ResidualBlock(net, 'res3a', '3b', out2a=64, out2b=64, stride=1, use_branch1=False, **bn_param)
+    DepthwiseResidualBlock(net, 'res2b', '3a', input_channel=32, out2a=64, out2b=64, stride=2, use_branch1=True, **bn_param)
+    DepthwiseResidualBlock(net, 'res3a', '3b', input_channel=64, out2a=64, out2b=64, stride=1, use_branch1=False, **bn_param)
 
-    ResidualBlock(net, 'res3b', '4a', out2a=128, out2b=128, stride=2, use_branch1=True, **bn_param)
-    ResidualBlock(net, 'res4a', '4b', out2a=128, out2b=128, stride=1, use_branch1=False, **bn_param)
+    DepthwiseResidualBlock(net, 'res3b', '4a', input_channel=64, out2a=128, out2b=128, stride=2, use_branch1=True, **bn_param)
+    DepthwiseResidualBlock(net, 'res4a', '4b', input_channel=128, out2a=128, out2b=128, stride=1, use_branch1=False, **bn_param)
 
     stride = 2
     dilation = 1
@@ -855,13 +917,14 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
       stride = 1
       dilation = 2
 
-    ResidualBlock(net, 'res4b', '5a', out2a=256, out2b=256, stride=stride, use_branch1=True, dilation=dilation, **bn_param)
-    ResidualBlock(net, 'res5a', '5b', out2a=256, out2b=256, stride=1, use_branch1=False, dilation=dilation, **bn_param)
+    DepthwiseResidualBlock(net, 'res4b', '5a', input_channel=128, out2a=256, out2b=256, stride=stride, use_branch1=True, dilation=dilation, **bn_param)
+    DepthwiseResidualBlock(net, 'res5a', '5b', input_channel=256, out2a=256, out2b=256, stride=1, use_branch1=False, dilation=dilation, **bn_param)
 
     if use_pool5:
       net.pool5 = L.Pooling(net.res5b, pool=P.Pooling.AVE, global_pooling=True)
 
     return net
+
 
 def ResNet50Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn_param):
     conv_prefix = ''
