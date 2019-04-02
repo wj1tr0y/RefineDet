@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-02 19:31:41
+@LastEditTime: 2019-04-02 19:35:36
 '''
 import os
 
@@ -1057,10 +1057,10 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
     ResidualBlock(net, 'res2a', '2b', out2a=32, out2b=32, stride=1, use_branch1=False, **bn_param)
 
     DepthwiseResidualBlock(net, 'res2b', '3a', input_channel=32, out2a=64, out2b=64, stride=2, use_branch1=True, **bn_param)
-    ResidualBlock(net, 'res3a', '3b', input_channel=64, out2a=64, out2b=64, stride=1, use_branch1=False, **bn_param)
+    ResidualBlock(net, 'res3a', '3b', out2a=64, out2b=64, stride=1, use_branch1=False, **bn_param)
 
     DepthwiseResidualBlock(net, 'res3b', '4a', input_channel=64, out2a=128, out2b=128, stride=2, use_branch1=True, **bn_param)
-    ResidualBlock(net, 'res4a', '4b', input_channel=128, out2a=128, out2b=128, stride=1, use_branch1=False, **bn_param)
+    ResidualBlock(net, 'res4a', '4b', out2a=128, out2b=128, stride=1, use_branch1=False, **bn_param)
 
     stride = 2
     dilation = 1
@@ -1069,7 +1069,7 @@ def ResNet18Body(net, from_layer, use_pool5=True, use_dilation_conv5=False, **bn
       dilation = 2
 
     DepthwiseResidualBlock(net, 'res4b', '5a', input_channel=128, out2a=256, out2b=256, stride=stride, use_branch1=True, dilation=dilation, **bn_param)
-    ResidualBlock(net, 'res5a', '5b', input_channel=256, out2a=256, out2b=256, stride=1, use_branch1=False, dilation=dilation, **bn_param)
+    ResidualBlock(net, 'res5a', '5b', out2a=256, out2b=256, stride=1, use_branch1=False, dilation=dilation, **bn_param)
 
     if use_pool5:
       net.pool5 = L.Pooling(net.res5b, pool=P.Pooling.AVE, global_pooling=True)
