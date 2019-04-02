@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-04-02 10:53:49
+@LastEditTime: 2019-04-02 10:53:57
+'''
 import cv2
 import argparse
 import os
@@ -54,7 +64,7 @@ if __name__ == '__main__':
     os.mkdir(out_dir)
 
     print 'Detecting pedestrian.....'
-    cmd = "python run_test.py --gpuid {} --out-dir {} --test-set {}".format(args.gpuid, out_dir, frame_save_dir.split('/')[-1])
+    cmd = "python run_test.py --gpuid {} --save_dir {} --test_set {}".format(args.gpuid, out_dir, frame_save_dir.split('/')[-1])
     print(cmd)
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     output = process.communicate()
