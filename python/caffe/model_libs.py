@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-02 18:07:23
+@LastEditTime: 2019-04-02 18:15:27
 '''
 import os
 
@@ -184,7 +184,7 @@ def DepthwiseResidualBlock(net, from_layer, block_name, input_channel, out2a, ou
     bn_postfix = ''
     scale_prefix = 'scale{}_'.format(block_name)
     scale_postfix = ''
-    use_scale = True
+    use_scale = False
 
     if use_branch1:
         branch_name = 'branch1'

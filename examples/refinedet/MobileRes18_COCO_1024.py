@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-02 18:08:44
+@LastEditTime: 2019-04-02 18:14:15
 '''
 from __future__ import print_function
 import sys
@@ -94,7 +94,7 @@ train_data_ratio = [0.5, 0.3, 0.2]
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
 resize_width = 1024
-resize_height = 640
+resize_height = 1024
 resize = "{}x{}".format(resize_width, resize_height)
 batch_sampler = [
         {
