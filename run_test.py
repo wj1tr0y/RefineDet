@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-04-02 10:50:06
-@LastEditTime: 2019-04-02 10:52:52
+@LastEditTime: 2019-04-02 19:28:32
 '''
 '''
 In this example, we will load a RefineDet model and use it to detect objects.
@@ -29,7 +29,7 @@ from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 
 class PeopleDetection:
-    def __init__(self, modelDeployFile,  modelWeightsFile, seg_model, gpuid=0,  threshold=0.60,  img_resize=512, batch_size=25):
+    def __init__(self, modelDeployFile,  modelWeightsFile, gpuid=0,  threshold=0.60,  img_resize=512, batch_size=25):
         caffe.set_device(int(gpuid))
         caffe.set_mode_gpu()
         self.img_resize = img_resize
@@ -47,8 +47,6 @@ class PeopleDetection:
         self.transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
         self.transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
         self.transformer.set_channel_swap('data', (2, 1, 0))  # the reference model has channels in BGR order instead of RGB
-        self.transform_seg = transforms.Normalize(mean=(104.008, 116.669, 122.675), std=(1, 1, 1))
-        self.seg_model = seg_model
         
     def detect(self, img_dir):
         print('Processing {}:'.format(img_dir))
@@ -130,18 +128,10 @@ def net_init(batch_size, gpuid=0):
     @return: three instances of det_net, op_net, seg_net
     '''
     # load detection model
-    modelDeployFile = 'models/detection/res101_deploy.prototxt'
+    modelDeployFile = 'models/deploy.prototxt'
     
-    modelWeightsFile = 'models/detection/coco_refinedet_resnet101_512x512_final.caffemodel'
-    opt = parser.parse_args()
-    opt.model_name = 'seg_shuffle'
-    opt.which_model = 'best'
-    opt.train_root = 'models/'  # '/public_datasets/.ck'
-    opt.resume = True
-    opt.typ='conv'
-    opt.gpus = gpuid
-    seg_model = SegmentModel(opt, False)
-    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, seg_model, gpuid=gpuid, img_resize=512, batch_size=batch_size, threshold=0.40)
+    modelWeightsFile = 'models/coco_refinedet_MobileRes18_1024x1024_iter_1251.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.40)
 
     return det_net
 
