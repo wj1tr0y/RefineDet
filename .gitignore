@@ -1,7 +1,6 @@
 # ignore all model files, job files and test files
 models/*
 jobs/*
-test/*
 *result*
 .build_release/*
 build
