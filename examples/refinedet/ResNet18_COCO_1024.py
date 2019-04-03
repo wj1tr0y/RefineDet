@@ -328,8 +328,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 50
-accum_batch_size = 50
+batch_size = 100
+accum_batch_size = 100
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -596,7 +596,7 @@ if remove_old_models:
 # Create job file.
 with open(job_file, 'w') as f:
   f.write('cd {}\n'.format(caffe_root))
-  f.write('./build/tools/caffe train \\\n')
+  f.write('./nvcaffe/build/tools/caffe train \\\n')
   f.write('--solver="{}" \\\n'.format(solver_file))
   f.write(train_src_param)
   if solver_param['solver_mode'] == P.Solver.GPU:
