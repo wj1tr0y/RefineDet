@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-03 11:54:28
+@LastEditTime: 2019-04-03 17:11:59
 '''
 from __future__ import print_function
 import sys
@@ -94,7 +94,7 @@ train_data_ratio = [0.5, 0.3, 0.2]
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
 resize_width = 1024
-resize_height = 640
+resize_height = 1024
 resize = "{}x{}".format(resize_width, resize_height)
 batch_sampler = [
         {
@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0,1"
+gpus = "2,3"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 100
-accum_batch_size = 100
+batch_size = 70
+accum_batch_size = 70
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
