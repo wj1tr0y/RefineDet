@@ -88,13 +88,13 @@ remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
 train_data = ["examples/coco/coco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
-# train_data = 'examples/hardexamples/hardexamples_train_lmdb'
+# train_data = 'examples/coco/coco_train_lmdb'
 train_data_ratio = [0.5, 0.3, 0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
 resize_width = 1024
-resize_height = 1024
+resize_height = 640
 resize = "{}x{}".format(resize_width, resize_height)
 batch_sampler = [
         {
@@ -263,9 +263,9 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "/home/wangjilong/pedestrian/RefineDet/models/ResNet/coco/coco_refinedet_resnet18_80_1024x1024_iter_266000.caffemodel"
+pretrain_model = "/home/wangjilong/RefineDet/models/resnet18_126000.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/zhili_coco_posneg/labelmap_coco.prototxt"
+label_map_file = "data/coco/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
 num_classes = 2
@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "4,7"
+gpus = "0,1"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 50
-accum_batch_size = 50
+batch_size = 100
+accum_batch_size = 100
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -598,7 +598,7 @@ if remove_old_models:
 # Create job file.
 with open(job_file, 'w') as f:
   f.write('cd {}\n'.format(caffe_root))
-  f.write('./build/tools/caffe train \\\n')
+  f.write('./nvcaffe/build/tools/caffe train \\\n')
   f.write('--solver="{}" \\\n'.format(solver_file))
   f.write(train_src_param)
   if solver_param['solver_mode'] == P.Solver.GPU:

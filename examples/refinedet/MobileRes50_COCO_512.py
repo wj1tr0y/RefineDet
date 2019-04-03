@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-03-27 15:20:04
+@LastEditTime: 2019-04-02 17:03:23
+'''
 from __future__ import print_function
 import sys
 sys.path.append("./python")
@@ -77,9 +87,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = "examples/coco/coco_train_lmdb"
+train_data = "examples/coco_80/coco_80_train_lmdb"
 # The database file for testing data. Created by data/coco/create_data.sh
-test_data = "examples/coco/coco_val_lmdb"
+test_data = "examples/coco_80/coco_80_val_lmdb"
 # Specify the batch sampler.
 resize_width = 512
 resize_height = 512
@@ -225,7 +235,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet101_{}".format(resize)
+job_name = "refinedet_resnet50_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -249,14 +259,14 @@ snapshot_prefix = "{}/{}".format(snapshot_dir, model_name)
 job_file = "{}/{}.sh".format(job_dir, model_name)
 
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
-name_size_file = "data/coco/minival2014_name_size.txt"
+name_size_file = "data/coco_80/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "models/ResNet/ResNet-101-model.caffemodel"
+# pretrain_model = "models/ResNet/ResNet-101-model.caffemodel"
 # Stores LabelMapItem.
-label_map_file = "data/coco/labelmap_coco.prototxt"
+label_map_file = "data/coco_80/labelmap_coco.prototxt"
 
 # MultiBoxLoss parameters.
-num_classes = 2 
+num_classes = 2
 share_location = True
 background_label_id = 0
 train_on_diff_gt = False
@@ -295,7 +305,7 @@ min_dim = 512
 # res4b22_relu ==> 32 x 32
 # res5c_relu ==> 16 x 16
 # res5c_relu/conv1_2_relu ==> 8 x 8
-arm_source_layers = ['res3b3_relu', 'res4b22_relu', 'res5c_relu', 'res6_relu']
+arm_source_layers = ['res3b3_relu', 'res4b5_relu', 'res5c_relu', 'res6_relu']
 odm_source_layers = ['P3', 'P4', 'P5', 'P6']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
@@ -311,13 +321,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0,1,2,3"
+gpus = "0"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 10 
-accum_batch_size = 10
+batch_size = 1
+accum_batch_size = 1
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -394,7 +404,7 @@ det_eval_param = {
 check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+# check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -405,7 +415,7 @@ net.data, net.label = CreateAnnotatedDataLayer(train_data, batch_size=batch_size
         train=True, output_label=True, label_map_file=label_map_file,
         transform_param=train_transform_param, batch_sampler=batch_sampler)
 
-ResNet101Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
+ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
@@ -454,6 +464,7 @@ net[name] = L.MultiBoxLoss(*mbox_layers_odm, multibox_loss_param=multibox_loss_p
 with open(train_net_file, 'w') as f:
     print('name: "{}_train"'.format(model_name), file=f)
     print(net.to_proto(), file=f)
+
 shutil.copy(train_net_file, job_dir)
 
 # Create test net.
@@ -462,7 +473,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-ResNet101Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
+ResNet50Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
@@ -490,7 +501,7 @@ flatten_name = "{}_flatten".format(conf_name)
 net[flatten_name] = L.Flatten(net[softmax_name], axis=1)
 mbox_layers_out[3] = net[flatten_name]
 
-conf_name = "odm_conf"
+conf_name = "odm_conf_ft"
 reshape_name = "{}_reshape".format(conf_name)
 net[reshape_name] = L.Reshape(net[conf_name], shape=dict(dim=[0, -1, num_classes]))
 softmax_name = "{}_softmax".format(conf_name)
@@ -546,7 +557,9 @@ for file in os.listdir(snapshot_dir):
     if iter > max_iter:
       max_iter = iter
 
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+train_src_param = ''
+
+# train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
