@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-03-27 16:15:05
+@LastEditTime: 2019-04-03 11:54:28
 '''
 from __future__ import print_function
 import sys
@@ -561,7 +561,9 @@ solver = caffe_pb2.SolverParameter(
         **solver_param)
 
 with open(solver_file, 'w') as f:
+    f.writelines('store_blobs_in_old_format: true\n')
     print(solver, file=f)
+    
 shutil.copy(solver_file, job_dir)
 
 max_iter = 0
