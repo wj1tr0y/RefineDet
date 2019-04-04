@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-04-02 10:50:06
-@LastEditTime: 2019-04-02 10:52:52
+@LastEditTime: 2019-04-04 13:05:09
 '''
 '''
 In this example, we will load a RefineDet model and use it to detect objects.
@@ -21,15 +21,15 @@ import time
 os.environ['GLOG_minloglevel'] = '3'
 
 # Make sure that caffe is on the python path:
-caffe_root = './nvcaffe'
-os.chdir(caffe_root)
+caffe_root = './'
+# os.chdir(caffe_root)
 sys.path.insert(0, os.path.join(caffe_root, 'python'))
 import caffe
 from google.protobuf import text_format
 from caffe.proto import caffe_pb2
 
 class PeopleDetection:
-    def __init__(self, modelDeployFile,  modelWeightsFile, seg_model, gpuid=0,  threshold=0.60,  img_resize=512, batch_size=25):
+    def __init__(self, modelDeployFile,  modelWeightsFile, gpuid=0,  threshold=0.60,  img_resize=512, batch_size=25):
         caffe.set_device(int(gpuid))
         caffe.set_mode_gpu()
         self.img_resize = img_resize
@@ -96,6 +96,7 @@ class PeopleDetection:
     def save_results(self, save_dir):
         for im_name, results in self.frame_result:
             img = self.img[im_name] * 255
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             for i in range(0, results.shape[0]):
                 score = results[i, -2]
                 if self.threshold and score < self.threshold:
@@ -112,6 +113,7 @@ class PeopleDetection:
                 cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 255, 255), 3)
                 display_text = '%s: %.2f' % ('Person', score)
                 cv2.putText(img, display_text, (xmin, ymin), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255,255,255), thickness=3)
+            
             cv2.imwrite(os.path.join(save_dir, im_name[:-4] + '_dets.jpg'), img)
             print('Saved: ' + os.path.join(save_dir, im_name[:-4] + '_dets.jpg'))
             sys.stdout.flush()
@@ -129,8 +131,8 @@ def net_init(batch_size, gpuid=0):
     # load detection model
     modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
     
-    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet101_512x512_final.caffemodel'
-    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=512, batch_size=batch_size, threshold=0.40)
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_222000.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.35)
 
     return det_net
 

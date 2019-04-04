@@ -20,7 +20,7 @@ build
 # Video files
 *.mp4
 *.avi
-
+*.jpg
 #output file
 detout/*
 hardresult/*
