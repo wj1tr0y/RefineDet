@@ -21,7 +21,7 @@ import time
 os.environ['GLOG_minloglevel'] = '3'
 
 # Make sure that caffe is on the python path:
-caffe_root = './'
+caffe_root = './nvcaffe'
 os.chdir(caffe_root)
 sys.path.insert(0, os.path.join(caffe_root, 'python'))
 import caffe
@@ -47,8 +47,6 @@ class PeopleDetection:
         self.transformer.set_mean('data', np.array([104, 117, 123]))  # mean pixel
         self.transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
         self.transformer.set_channel_swap('data', (2, 1, 0))  # the reference model has channels in BGR order instead of RGB
-        self.transform_seg = transforms.Normalize(mean=(104.008, 116.669, 122.675), std=(1, 1, 1))
-        self.seg_model = seg_model
         
     def detect(self, img_dir):
         print('Processing {}:'.format(img_dir))
@@ -61,7 +59,6 @@ class PeopleDetection:
         frame_result = []
         batch_size = self.batch_size
         names = []
-        shapes = []
         last_c = 0
 
         for count, im_name in enumerate(im_names):
@@ -130,18 +127,10 @@ def net_init(batch_size, gpuid=0):
     @return: three instances of det_net, op_net, seg_net
     '''
     # load detection model
-    modelDeployFile = 'models/detection/res101_deploy.prototxt'
+    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
     
-    modelWeightsFile = 'models/detection/coco_refinedet_resnet101_512x512_final.caffemodel'
-    opt = parser.parse_args()
-    opt.model_name = 'seg_shuffle'
-    opt.which_model = 'best'
-    opt.train_root = 'models/'  # '/public_datasets/.ck'
-    opt.resume = True
-    opt.typ='conv'
-    opt.gpus = gpuid
-    seg_model = SegmentModel(opt, False)
-    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, seg_model, gpuid=gpuid, img_resize=512, batch_size=batch_size, threshold=0.40)
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet101_512x512_final.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=512, batch_size=batch_size, threshold=0.40)
 
     return det_net
 

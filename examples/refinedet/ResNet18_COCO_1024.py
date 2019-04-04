@@ -328,8 +328,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 70
-accum_batch_size = 70
+batch_size = 120
+accum_batch_size = 120
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -359,7 +359,7 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [120000, 240000, 340000],
+    'stepvalue': [120000, 200000, 340000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
