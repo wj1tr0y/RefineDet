@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 import sys
-sys.path.append("/home/wangjilong/pedestrian/RefineDet/python")
+sys.path.append("/home/wangjilong/RefineDet/python")
 
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format

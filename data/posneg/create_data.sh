@@ -1,11 +1,11 @@
-cur_dir="$HOME/pedestrian/RefineDet/data/zhili_neg"
+cur_dir="$HOME/RefineDet/data/posneg"
 root_dir=$cur_dir/../..
 
 cd $root_dir
 
-redo=false
-data_root_dir="$HOME/data/zhili_neg"
-dataset_name="zhili_neg"
+redo=true
+data_root_dir="$HOME/data/posneg"
+dataset_name="posneg"
 mapfile="$root_dir/data/$dataset_name/labelmap_coco.prototxt"
 anno_type="detection"
 label_type="json"
