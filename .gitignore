@@ -5,6 +5,7 @@ jobs/*
 .build_release/*
 build
 coco_mine/*
+zhili_mine/*
 # ignore all pyc
 *.pyc
 

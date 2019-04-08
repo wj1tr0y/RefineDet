@@ -25,8 +25,8 @@ if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 pbar = tqdm(total=100)
 for i in range(100):
-    img_dir = os.path.join('/home/wangjilong/data/zhili_coco_posneg/ImageSet', img_list[i])
-    ann_dir = os.path.join('./hardresult', ann_list[i])
+    img_dir = os.path.join('/home/wangjilong/data/zhili/ImageSet', img_list[i])
+    ann_dir = os.path.join('./coco_mine', ann_list[i])
     ann = json.load(open(ann_dir, 'r'))
     img = cv2.imread(img_dir, cv2.IMREAD_COLOR)
 
