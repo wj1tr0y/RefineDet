@@ -3,7 +3,7 @@
 @Date: 2019-01-05 14:44:14
 @LastEditors: Jilong Wang
 @Email: jilong.wang@watrix.ai
-@LastEditTime: 2019-03-11 18:24:46
+@LastEditTime: 2019-04-08 16:36:50
 @Description: In this script, we will load a RefineDet model to detect pedestriancd .
 '''
 #coding:utf-8
@@ -63,7 +63,7 @@ class PeopleDetection:
         last_c = 0
         total = len(im_names)
         for count, im_name in enumerate(im_names):
-            image_file = os.path.join('/home/wangjilong/data/zhili_coco_posneg/ImageSet', im_name)
+            image_file = os.path.join(img_dir, im_name)
             try:
                 image = caffe.io.load_image(image_file)
             except:
@@ -127,8 +127,8 @@ def net_init(batch_size, gpuid=0):
     @return: three instances of det_net, op_net, seg_net
     '''
     # load detection model
-    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_340000.caffemodel'
+    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_307000.caffemodel'
     det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.20)
 
     return det_net
@@ -137,9 +137,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "run test and get all result")
     parser.add_argument("--gpuid",
         help = "The gpu chosen to run the model.", required=True)
-    parser.add_argument("--save-dir",
+    parser.add_argument("--save_dir",
         help = "The output directory where we store the result.", required=True)
-    parser.add_argument("--test-set", 
+    parser.add_argument("--test_set", 
         help = "which sets your wanna run test.", required=True)
 
     args = parser.parse_args()
