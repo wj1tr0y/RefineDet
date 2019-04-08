@@ -17,6 +17,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 import json
+from tqdm import tqdm
 os.environ['GLOG_minloglevel'] = '3'
 # Make sure that caffe is on the python path:x
 caffe_root = './'
@@ -61,16 +62,19 @@ class PeopleDetection:
         shapes = []
         last_c = 0
         total = len(im_names)
+        pbar = tqdm(total=total)
         for count, im_name in enumerate(im_names):
-            image_file = os.path.join('/home/wangjilong/data/coco/ImageSet/train2017', im_name)
+            pbar.update(1)
+            image_file = os.path.join('/home/wangjilong/data/zhili/ImageSet', im_name)
             try:
                 image = caffe.io.load_image(image_file)
             except:
+                shapes.append((0,0,0))
+                names.append('error.jpg')
                 continue
             transformed_image = self.transformer.preprocess('data', image)
             self.net.blobs['data'].data[(count - last_c) % batch_size, ...] = transformed_image
             shapes.append(image.shape)
-            print(count, total)
             names.append(im_name)
             if (count + 1 - last_c) % batch_size == 0:
                 last_c = count + 1
@@ -96,6 +100,8 @@ class PeopleDetection:
 
     def save_results(self, save_dir):
         for im_name, results, shape in self.frame_result:
+            if im_name == 'error.jpg':
+                continue
             annotations = []
             for i in range(0, results.shape[0]):
                 score = results[i, -2]
@@ -127,7 +133,7 @@ def net_init(batch_size, gpuid=0):
     '''
     # load detection model
     modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
-    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_307000.caffemodel'
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_final.caffemodel'
     det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.20)
 
     return det_net
@@ -154,5 +160,5 @@ if __name__ == '__main__':
         print("{} doesn't exists".format(img_dir))
         sys.exit(0)
 
-    det = net_init(50, gpuid=args.gpuid)
+    det = net_init(20, gpuid=args.gpuid)
     det.get_output(img_dir, save_dir)
