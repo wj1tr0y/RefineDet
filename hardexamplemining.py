@@ -3,7 +3,7 @@
 @Date: 2019-01-05 14:44:14
 @LastEditors: Jilong Wang
 @Email: jilong.wang@watrix.ai
-@LastEditTime: 2019-04-08 16:36:50
+@LastEditTime: 2019-04-08 16:39:10
 @Description: In this script, we will load a RefineDet model to detect pedestriancd .
 '''
 #coding:utf-8
@@ -55,7 +55,6 @@ class PeopleDetection:
         im_names = [x.split('/')[-1][:-5]+'.jpg' for x in im_names if 'json' in x]
 
         im_names.sort()
-        im_names = im_names[:52478]
         frame_result = []
         batch_size = self.batch_size
         names = []
@@ -63,7 +62,7 @@ class PeopleDetection:
         last_c = 0
         total = len(im_names)
         for count, im_name in enumerate(im_names):
-            image_file = os.path.join(img_dir, im_name)
+            image_file = os.path.join('/home/wangjilong/data/coco/ImageSet/train2017', im_name)
             try:
                 image = caffe.io.load_image(image_file)
             except:
