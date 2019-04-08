@@ -3,7 +3,7 @@
 @Date: 2019-01-05 14:44:14
 @LastEditors: Jilong Wang
 @Email: jilong.wang@watrix.ai
-@LastEditTime: 2019-04-08 16:39:10
+@LastEditTime: 2019-04-08 16:42:05
 @Description: In this script, we will load a RefineDet model to detect pedestriancd .
 '''
 #coding:utf-8
@@ -52,7 +52,7 @@ class PeopleDetection:
 
         # get all image names and sorted by name
         im_names = os.listdir(img_dir)
-        im_names = [x.split('/')[-1][:-5]+'.jpg' for x in im_names if 'json' in x]
+        im_names = [x[:-5]+'.jpg' for x in im_names if 'json' in x]
 
         im_names.sort()
         frame_result = []
