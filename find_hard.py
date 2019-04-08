@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=UTF-8
+'''
+@Author: Jilong Wang
+@LastEditors: Jilong Wang
+@Email: jilong.wang@watrix.ai
+@Description: file content
+@Date: 2019-04-08 18:38:49
+@LastEditTime: 2019-04-08 18:42:16
+'''
 import threading
 import json
 import os
@@ -78,8 +88,8 @@ def find_hard(det_names, count):
 
 
 if __name__ == "__main__":
-    ann_dir = '/home/wangjilong/data/zhili_coco_posneg/Annotations'
-    det_dir = './hardresult'
+    ann_dir = '/home/wangjilong/data/zhili/Annotations'
+    det_dir = './coco_mine'
     det_name = os.listdir(det_dir)
     threads = []
     for j, i in enumerate(range(0, len(det_name), 10000)):
@@ -91,7 +101,7 @@ if __name__ == "__main__":
     
     name = os.listdir('.')
     name = [x for x in name if 'thread' in x]
-    with open('hardexample.txt', 'w') as hd:
+    with open('zhili_hardexample.txt', 'w') as hd:
         for i in name:
             with open(i, 'r') as f:
                 for line in f.readlines():

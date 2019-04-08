@@ -3,7 +3,7 @@
 @Date: 2019-01-05 14:44:14
 @LastEditors: Jilong Wang
 @Email: jilong.wang@watrix.ai
-@LastEditTime: 2019-04-08 16:42:05
+@LastEditTime: 2019-04-08 16:46:19
 @Description: In this script, we will load a RefineDet model to detect pedestriancd .
 '''
 #coding:utf-8
