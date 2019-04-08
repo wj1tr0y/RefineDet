@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-08 20:35:08
+@LastEditTime: 2019-04-08 20:35:32
 '''
 from __future__ import print_function
 import sys
@@ -237,7 +237,7 @@ test_transform_param = {
 base_lr = 0.00004 #0.00004
 
 # Modify the job name if you want.
-job_name = "refinedet_resnet18_{}".format(resize)
+job_name = "refinedet_resnet18_big_{}".format(resize)
 # The name of the model. Modify it if you want.
 model_name = "coco_{}".format(job_name)
 
@@ -432,7 +432,7 @@ else:
     net.data = L.Concat(*data, axis=0)
     net.label = L.Concat(*label, axis=2)
 
-ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
+ResNet18BodyBig(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
@@ -489,7 +489,7 @@ net.data, net.label = CreateAnnotatedDataLayer(test_data, batch_size=test_batch_
         train=False, output_label=True, label_map_file=label_map_file,
         transform_param=test_transform_param)
 
-ResNet18Body(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
+ResNet18BodyBig(net, from_layer='data', use_pool5=False, use_dilation_conv5=False)
 
 AddExtraLayers(net, arm_source_layers, use_batchnorm=True)
 arm_source_layers.reverse()
