@@ -15,17 +15,17 @@ import json
 import numpy as np
 from tqdm import tqdm
 
-ann_list = list(open('hardexample.txt', 'r').readlines())
+ann_list = list(open('coco_hardexample.txt', 'r').readlines())
 ann_list = list(map(lambda x:x.strip('\n'), ann_list))
-ann_list = np.random.choice(ann_list, 100)
+#ann_list = np.random.choice(ann_list, 100)
 
 img_list = [x[:-10]+'.jpg' for x in ann_list]
 save_dir = './detout'
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
-pbar = tqdm(total=100)
-for i in range(100):
-    img_dir = os.path.join('/home/wangjilong/data/zhili/ImageSet', img_list[i])
+pbar = tqdm(total=len(ann_list))
+for i in range(len(ann_list)):
+    img_dir = os.path.join('/home/wangjilong/data/coco/ImageSet/train2017', img_list[i])
     ann_dir = os.path.join('./coco_mine', ann_list[i])
     ann = json.load(open(ann_dir, 'r'))
     img = cv2.imread(img_dir, cv2.IMREAD_COLOR)

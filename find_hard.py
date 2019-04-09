@@ -78,7 +78,7 @@ def find_hard(det_names, count):
             if len(ann) == 0:
                 if mismatch_bbox > 3:
                     hard_name.append(det)
-            elif float(mismatch_bbox)/len(ann) > 0.55 or float(multi_bbox)/len(ann) > 0.55 or float(lost_bbox)/len(ann) > 0.55:
+            elif float(mismatch_bbox)/len(ann) > 0.6 or float(multi_bbox)/len(ann) > 0.6 or float(lost_bbox)/len(ann) > 0.6:
                 hard_name.append(det)
         except:
             pass
@@ -88,7 +88,7 @@ def find_hard(det_names, count):
 
 
 if __name__ == "__main__":
-    ann_dir = '/home/wangjilong/data/zhili/Annotations'
+    ann_dir = '/home/wangjilong/data/coco/Annotations/train2017'
     det_dir = './coco_mine'
     det_name = os.listdir(det_dir)
     threads = []
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     
     name = os.listdir('.')
     name = [x for x in name if 'thread' in x]
-    with open('zhili_hardexample.txt', 'w') as hd:
+    with open('coco_hardexample.txt', 'w') as hd:
         for i in name:
             with open(i, 'r') as f:
                 for line in f.readlines():

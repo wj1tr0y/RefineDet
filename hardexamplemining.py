@@ -65,7 +65,7 @@ class PeopleDetection:
         pbar = tqdm(total=total)
         for count, im_name in enumerate(im_names):
             pbar.update(1)
-            image_file = os.path.join('/home/wangjilong/data/zhili/ImageSet', im_name)
+            image_file = os.path.join('/home/wangjilong/data/coco/ImageSet/train2017', im_name)
             try:
                 image = caffe.io.load_image(image_file)
             except:
@@ -133,8 +133,8 @@ def net_init(batch_size, gpuid=0):
     '''
     # load detection model
     modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/deploy.prototxt'
-    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_final.caffemodel'
-    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.20)
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_340000.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.4)
 
     return det_net
 
@@ -160,5 +160,5 @@ if __name__ == '__main__':
         print("{} doesn't exists".format(img_dir))
         sys.exit(0)
 
-    det = net_init(20, gpuid=args.gpuid)
+    det = net_init(50, gpuid=args.gpuid)
     det.get_output(img_dir, save_dir)
