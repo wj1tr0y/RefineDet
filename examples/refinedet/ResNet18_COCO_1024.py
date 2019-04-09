@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-08 16:36:12
+@LastEditTime: 2019-04-09 19:26:35
 '''
 from __future__ import print_function
 import sys
@@ -87,9 +87,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/coco/coco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb", 'examples/posneg/posneg_train_lmdb']
+train_data = ["examples/easycoco/easycoco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
 # train_data = 'examples/coco/coco_train_lmdb'
-train_data_ratio = [0.2, 0.2, 0.2, 0.4]
+train_data_ratio = [0.5, 0.4, 0.1]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -263,7 +263,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "/home/wangjilong/RefineDet/models/resnet18_126000.caffemodel"
+pretrain_model = "models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_final.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/coco/labelmap_coco.prototxt"
 
@@ -328,8 +328,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 120
-accum_batch_size = 120
+batch_size = 200
+accum_batch_size = 200
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -359,7 +359,7 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [120000, 200000, 340000],
+    'stepvalue': [60000, 120000, 150000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
