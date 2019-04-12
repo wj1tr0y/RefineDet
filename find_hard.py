@@ -88,8 +88,8 @@ def find_hard(det_names, count):
 
 
 if __name__ == "__main__":
-    ann_dir = '/home/wangjilong/data/coco/Annotations/train2017'
-    det_dir = './coco_mine'
+    ann_dir = '/home/wangjilong/data/zhili/Annotations/'
+    det_dir = './zhili_mine'
     det_name = os.listdir(det_dir)
     threads = []
     for j, i in enumerate(range(0, len(det_name), 10000)):
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     
     name = os.listdir('.')
     name = [x for x in name if 'thread' in x]
-    with open('coco_hardexample.txt', 'w') as hd:
+    with open('hardexample.txt', 'w') as hd:
         for i in name:
             with open(i, 'r') as f:
                 for line in f.readlines():

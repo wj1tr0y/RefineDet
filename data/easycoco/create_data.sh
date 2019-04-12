@@ -3,7 +3,7 @@ root_dir=$cur_dir/../..
 
 cd $root_dir
 
-redo=false
+redo=true
 data_root_dir="$HOME/data/easycoco"
 dataset_name="easycoco"
 mapfile="$root_dir/data/$dataset_name/labelmap_coco.prototxt"

@@ -15,7 +15,7 @@ import json
 import numpy as np
 from tqdm import tqdm
 
-ann_list = list(open('coco_hardexample.txt', 'r').readlines())
+ann_list = list(open('hardexample.txt', 'r').readlines())
 ann_list = list(map(lambda x:x.strip('\n'), ann_list))
 #ann_list = np.random.choice(ann_list, 100)
 
@@ -25,8 +25,8 @@ if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 pbar = tqdm(total=len(ann_list))
 for i in range(len(ann_list)):
-    img_dir = os.path.join('/home/wangjilong/data/coco/ImageSet/train2017', img_list[i])
-    ann_dir = os.path.join('./coco_mine', ann_list[i])
+    img_dir = os.path.join('/home/wangjilong/data/easycoco/ImageSet/', img_list[i])
+    ann_dir = os.path.join('./easycoco_mine', ann_list[i])
     ann = json.load(open(ann_dir, 'r'))
     img = cv2.imread(img_dir, cv2.IMREAD_COLOR)
 
