@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-19 16:09:17
+@LastEditTime: 2019-04-19 16:11:14
 '''
 from __future__ import print_function
 import sys
@@ -32,10 +32,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
 
     # 512/64: 8 x 8
     ConvBNLayer(net, 'conv7', 'conv8', use_bn=True, use_relu=True,
-        num_output=512, kernel_size=1, pad=1, stride=1,
-        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
-        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
-        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+        num_output=512, kernel_size=1, pad=1, stride=1)
     arm_source_layers.reverse()
     num_p = 8
     for index, layer in enumerate(arm_source_layers):
