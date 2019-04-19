@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-19 16:17:24
+@LastEditTime: 2019-04-19 16:28:17
 '''
 from __future__ import print_function
 import sys
@@ -35,25 +35,25 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     for index, layer in enumerate(arm_source_layers):
         from_layer = layer
         out_layer = "TL{}_{}".format(num_p, 1)
-        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+        ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
         if num_p == 7:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
 
         else:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 3, 1, 1)
 
             from_layer = "P{}".format(num_p+1)
             out_layer = "P{}-up".format(num_p+1)
-            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 256, 2, 0, 2)
+            DeconvBNLayer(net, from_layer, out_layer, use_batchnorm, False, 128, 2, 0, 2)
 
             from_layer = ["TL{}_{}".format(num_p, 2), "P{}-up".format(num_p+1)]
             out_layer = "Elt{}".format(num_p)
@@ -64,7 +64,7 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
 
             from_layer = out_layer
             out_layer = "P{}".format(num_p)
-            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
+            ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 128, 3, 1, 1)
         num_p = num_p - 1
 
     return net
@@ -439,7 +439,7 @@ mbox_layers = CreateRefineDetHead(net, data_layer='data', from_layers=arm_source
         aspect_ratios=aspect_ratios, steps=steps, normalizations=[],
         num_classes=num_classes, share_location=share_location, flip=flip, clip=clip,
         prior_variance=prior_variance, kernel_size=3, pad=1, lr_mult=1, from_layers2=odm_source_layers,
-        inter_layer_depth = [1, 1, 1, 1])
+        inter_layer_depth = None)
 
 name = "arm_loss"
 mbox_layers_arm = []
@@ -496,7 +496,7 @@ mbox_layers = CreateRefineDetHead(net, data_layer='data', from_layers=arm_source
         aspect_ratios=aspect_ratios, steps=steps, normalizations=[],
         num_classes=num_classes, share_location=share_location, flip=flip, clip=clip,
         prior_variance=prior_variance, kernel_size=3, pad=1, lr_mult=1, from_layers2=odm_source_layers,
-        inter_layer_depth = [1, 1, 1, 1])
+        inter_layer_depth = None)
 
 mbox_layers_out = []
 mbox_layers_out.append(mbox_layers[3])

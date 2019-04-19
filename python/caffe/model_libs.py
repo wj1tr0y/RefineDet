@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-19 16:15:30
+@LastEditTime: 2019-04-19 16:24:35
 '''
 import os
 
@@ -675,7 +675,7 @@ def TinyBody(net, from_layer, **bn_param):
     net.pool3 = L.Pooling(net.conv3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
     
     ConvBNLayer(net, 'pool3', 'conv4', use_bn=True, use_relu=True,
-        num_output=128, kernel_size=3, pad=1, stride=1,
+        num_output=96, kernel_size=3, pad=1, stride=1,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
         scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
@@ -683,7 +683,7 @@ def TinyBody(net, from_layer, **bn_param):
     net.pool4 = L.Pooling(net.conv4, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     ConvBNLayer(net, 'pool4', 'conv5', use_bn=True, use_relu=True,
-        num_output=256, kernel_size=3, pad=1, stride=1,
+        num_output=128, kernel_size=3, pad=1, stride=1,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
         scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
@@ -691,7 +691,7 @@ def TinyBody(net, from_layer, **bn_param):
     net.pool5 = L.Pooling(net.conv5, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     ConvBNLayer(net, 'pool5', 'conv6', use_bn=True, use_relu=True,
-        num_output=512, kernel_size=3, pad=1, stride=1,
+        num_output=256, kernel_size=3, pad=1, stride=1,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
         scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
@@ -699,7 +699,7 @@ def TinyBody(net, from_layer, **bn_param):
     net.pool6 = L.Pooling(net.conv6, pool=P.Pooling.MAX, kernel_size=2, stride=2)
 
     ConvBNLayer(net, 'pool6', 'conv7', use_bn=True, use_relu=True,
-        num_output=1024, kernel_size=3, pad=1, stride=1,
+        num_output=512, kernel_size=3, pad=1, stride=1,
         conv_prefix=conv_prefix, conv_postfix=conv_postfix,
         bn_prefix=bn_prefix, bn_postfix=bn_postfix,
         scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
