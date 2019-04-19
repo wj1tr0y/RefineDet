@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-15 15:04:39
-@LastEditTime: 2019-04-08 20:34:24
+@LastEditTime: 2019-04-19 16:02:24
 '''
 import os
 
@@ -640,6 +640,70 @@ def ZFNetBody(net, from_layer, need_fc=True, fully_conv=False, reduced=False,
     for freeze_layer in freeze_layers:
         if freeze_layer in layers:
             net.update(freeze_layer, kwargs)
+
+    return net
+
+def TinyBody(net, from_layer, **bn_param):
+    conv_prefix = ''
+    conv_postfix = ''
+    bn_prefix = 'bn_'
+    bn_postfix = ''
+    scale_prefix = 'scale_'
+    scale_postfix = ''
+    ConvBNLayer(net, from_layer, 'conv1', use_bn=True, use_relu=True,
+        num_output=16, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool1 = L.Pooling(net.conv1, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    
+    ConvBNLayer(net, 'pool1', 'conv2', use_bn=True, use_relu=True,
+        num_output=32, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool2 = L.Pooling(net.conv2, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+
+    ConvBNLayer(net, 'pool2', 'conv3', use_bn=True, use_relu=True,
+        num_output=64, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool3 = L.Pooling(net.conv3, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+    
+    ConvBNLayer(net, 'pool3', 'conv4', use_bn=True, use_relu=True,
+        num_output=128, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool4 = L.Pooling(net.conv4, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+
+    ConvBNLayer(net, 'pool4', 'conv5', use_bn=True, use_relu=True,
+        num_output=256, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool5 = L.Pooling(net.conv5, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+
+    ConvBNLayer(net, 'pool5', 'conv6', use_bn=True, use_relu=True,
+        num_output=512, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
+    net.pool6 = L.Pooling(net.conv6, pool=P.Pooling.MAX, kernel_size=2, stride=2)
+
+    ConvBNLayer(net, 'pool6', 'conv7', use_bn=True, use_relu=True,
+        num_output=1024, kernel_size=3, pad=1, stride=1,
+        conv_prefix=conv_prefix, conv_postfix=conv_postfix,
+        bn_prefix=bn_prefix, bn_postfix=bn_postfix,
+        scale_prefix=scale_prefix, scale_postfix=scale_postfix, **bn_param)
+
 
     return net
 
