@@ -87,9 +87,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/coco/coco_train_lmdb", "examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
+train_data = ["examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
 # train_data = 'examples/coco/coco_train_lmdb'
-train_data_ratio = [0.5, 0.3, 0.2]
+train_data_ratio = [0.8, 0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -263,7 +263,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "/home/wangjilong/RefineDet/models/resnet18_126000.caffemodel"
+pretrain_model = "/home/wangjilong/coco_refinedet_resnet18_1024x1024_iter_0.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/coco/labelmap_coco.prototxt"
 
@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0,1"
+gpus = "0,1,2,3,4,5"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 50
-accum_batch_size = 50
+batch_size = 150
+accum_batch_size = 150
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -359,7 +359,7 @@ solver_param = {
     'base_lr': base_lr,
     'weight_decay': 0.0005,
     'lr_policy': "multistep",
-    'stepvalue': [120000, 240000, 340000],
+    'stepvalue': [100000, 150000, 200000],
     'gamma': 0.1,
     'momentum': 0.9,
     'iter_size': iter_size,
