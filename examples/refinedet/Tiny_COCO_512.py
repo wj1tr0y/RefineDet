@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-19 16:15:45
+@LastEditTime: 2019-04-19 16:17:04
 '''
 from __future__ import print_function
 import sys
@@ -305,7 +305,7 @@ loss_param = {
 # res5b_relu ==> 32 x 32
 # res5b_relu/conv1_2_relu ==> 16 x 16
 arm_source_layers = ['conv4', 'conv5', 'conv6', 'conv7']
-odm_source_layers = ['P5', 'P6', 'P7', 'P8']
+odm_source_layers = ['P4', 'P5', 'P6', 'P7']
 min_sizes = [32, 64, 128, 256]
 max_sizes = [[], [], [], []]
 steps = [8, 16, 32, 64]
