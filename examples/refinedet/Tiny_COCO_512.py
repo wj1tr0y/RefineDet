@@ -6,7 +6,7 @@
 @Email: jilong.wang@watrix.ai
 @Description: file content
 @Date: 2019-03-14 13:47:20
-@LastEditTime: 2019-04-19 16:11:14
+@LastEditTime: 2019-04-19 16:15:45
 '''
 from __future__ import print_function
 import sys
@@ -26,21 +26,18 @@ def AddExtraLayers(net, arm_source_layers=[], use_batchnorm=True):
     use_relu = True
 
     # Add additional convolutional layers.
-    # 512/32: 16 x 16
+    # 512/64: 8 x 8
     last_layer = net.keys()[-1]
     from_layer = last_layer
 
-    # 512/64: 8 x 8
-    ConvBNLayer(net, 'conv7', 'conv8', use_bn=True, use_relu=True,
-        num_output=512, kernel_size=1, pad=1, stride=1)
     arm_source_layers.reverse()
-    num_p = 8
+    num_p = 7
     for index, layer in enumerate(arm_source_layers):
         from_layer = layer
         out_layer = "TL{}_{}".format(num_p, 1)
         ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
 
-        if num_p == 8:
+        if num_p == 7:
             from_layer = out_layer
             out_layer = "TL{}_{}".format(num_p, 2)
             ConvBNLayer(net, from_layer, out_layer, use_batchnorm, use_relu, 256, 3, 1, 1)
