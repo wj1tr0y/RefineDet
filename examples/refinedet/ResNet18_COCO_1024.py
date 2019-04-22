@@ -87,9 +87,9 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/coco/create_data.sh
-train_data = ["examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
+train_data = ["examples/shizhan/shizhan_train_lmdb","examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
 # train_data = 'examples/coco/coco_train_lmdb'
-train_data_ratio = [0.8, 0.2]
+train_data_ratio = [0.4,0.4,0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -263,7 +263,7 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/coco/create_list.sh
 name_size_file = "data/coco/val2017_name_size.txt"
 # The pretrained ResNet101 model from https://github.com/KaimingHe/deep-residual-networks.
-pretrain_model = "/home/wangjilong/coco_refinedet_resnet18_1024x1024_iter_0.caffemodel"
+pretrain_model = "/home/wangjilong/pedestrian/RefineDet/models/ResNet/coco/refinedet_resnet18_1024x1024/coco_refinedet_resnet18_1024x1024_iter_0.caffemodel"
 # Stores LabelMapItem.
 label_map_file = "data/coco/labelmap_coco.prototxt"
 
