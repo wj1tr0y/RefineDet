@@ -11,7 +11,7 @@ CURDIR = os.path.dirname(os.path.realpath(__file__))
 # If true, re-create all list files.
 redo = True
 # The root directory which holds all information of the dataset.
-data_dir = "{}/data/huangpi".format(HOMEDIR)
+data_dir = "{}/data/shizhan".format(HOMEDIR)
 # The directory name which holds the image sets.
 imgset_dir = "ImageSet"
 # The extension of image filenames.
@@ -25,7 +25,7 @@ train_list_file = "{}/train.txt".format(CURDIR)
 # Create training set.
 # We follow Ross Girschick's split.
 if redo or not os.path.exists(train_list_file):
-    datasets = ["huangpi"]
+    datasets = ["shizhan"]
     img_files = []
     anno_files = []
     for dataset in datasets:

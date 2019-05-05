@@ -1,11 +1,11 @@
-cur_dir="$HOME/pedestrian/RefineDet/data/huangpi"
+cur_dir="$HOME/pedestrian/RefineDet/data/shizhan"
 root_dir=$cur_dir/../..
 
 cd $root_dir
 
 redo=false
-data_root_dir="$HOME/data/huangpi"
-dataset_name="huangpi"
+data_root_dir="$HOME/data/shizhan"
+dataset_name="shizhan"
 mapfile="$root_dir/data/$dataset_name/labelmap_coco.prototxt"
 anno_type="detection"
 label_type="json"

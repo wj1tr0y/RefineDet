@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "6,7"
+gpus = "0,1,2,3,4,5"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 50
-accum_batch_size = 50
+batch_size = 100
+accum_batch_size = 100
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -406,7 +406,7 @@ det_eval_param = {
 # check_if_exist(train_data)
 check_if_exist(test_data)
 check_if_exist(label_map_file)
-check_if_exist(pretrain_model)
+#check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
 make_if_not_exist(job_dir)
 make_if_not_exist(snapshot_dir)
@@ -574,7 +574,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 train_src_param = ''
-train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+#train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)

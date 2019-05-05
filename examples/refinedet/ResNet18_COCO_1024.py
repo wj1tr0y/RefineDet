@@ -89,7 +89,7 @@ remove_old_models = False
 # The database file for training data. Created by data/coco/create_data.sh
 train_data = ["examples/shizhan/shizhan_train_lmdb","examples/zhili/zhili_train_lmdb", "examples/newped/newped_train_lmdb"]
 # train_data = 'examples/coco/coco_train_lmdb'
-train_data_ratio = [0.4,0.4,0.2]
+train_data_ratio = [0.6,0.2,0.2]
 # The database file for testing data. Created by data/coco/create_data.sh
 test_data = "examples/coco/coco_val_lmdb"
 # Specify the batch sampler.
@@ -323,13 +323,13 @@ clip = False
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0,1,2,3,4,5"
+gpus = "0,1,2,3"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 150
-accum_batch_size = 150
+batch_size = 100
+accum_batch_size = 100
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
