@@ -17,7 +17,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 import json
-os.environ['GLOG_minloglevel'] = '3'
+os.environ['GLOG_minloglevel'] = '4'
 # Make sure that caffe is on the python path:x
 caffe_root = './'
 os.chdir(caffe_root)
@@ -55,7 +55,7 @@ class PeopleDetection:
         im_names = [x.split('/')[-1][:-5]+'.jpg' for x in im_names if 'json' in x]
 
         im_names.sort()
-        im_names = im_names[:52478]
+        im_names = im_names
         frame_result = []
         batch_size = self.batch_size
         names = []
@@ -63,7 +63,7 @@ class PeopleDetection:
         last_c = 0
         total = len(im_names)
         for count, im_name in enumerate(im_names):
-            image_file = os.path.join('/home/wangjilong/data/zhili_coco_posneg/ImageSet', im_name)
+            image_file = os.path.join('/home/wangjilong/data/easycoco/ImageSet', im_name)
             try:
                 image = caffe.io.load_image(image_file)
             except:
@@ -127,9 +127,9 @@ def net_init(batch_size, gpuid=0):
     @return: three instances of det_net, op_net, seg_net
     '''
     # load detection model
-    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/deploy.prototxt'
-    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_addneg_1024x1024/coco_refinedet_resnet18_addneg_1024x1024_iter_340000.caffemodel'
-    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.20)
+    modelDeployFile = 'models/ResNet/coco/refinedet_resnet18_easycoco1024x1024/deploy.prototxt'
+    modelWeightsFile = 'models/ResNet/coco/refinedet_resnet18_easycoco1024x1024/coco_refinedet_resnet18_easycoco1024x1024_iter_200000.caffemodel'
+    det_net = PeopleDetection(modelDeployFile, modelWeightsFile, gpuid=gpuid, img_resize=1024, batch_size=batch_size, threshold=0.40)
 
     return det_net
 

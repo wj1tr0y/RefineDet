@@ -6,17 +6,13 @@ import caffe
 import os
 
 if __name__ == '__main__':
-    GPU_ID = 0
+    GPU_ID = 4
     single_scale = True # True: sinle scale test;  False: multi scale test
-    test_set = 'voc_2007_test' # 'voc_2007_test' or 'voc_2012_test' or 'coco_2014_minival' or 'coco_2015_test-dev'
-    voc_path = 'models/VGGNet/VOC0712/refinedet_vgg16_320x320/'
-    coco_path = 'models/VGGNet/coco/refinedet_vgg16_320x320/'
+    test_set = 'coco_2017_val' # 'voc_2007_test' or 'voc_2012_test' or 'coco_2014_minival' or 'coco_2015_test-dev'
+    coco_path = 'models/ResNet/coco/refinedet_resnet101_512x512/'
 
     cfg.single_scale_test = single_scale
-    if 'voc' in test_set:
-        path = voc_path
-    else:
-        path = coco_path
+    path = coco_path
 
     if '320' in path:
         input_size = 320
@@ -31,7 +27,7 @@ if __name__ == '__main__':
 
     if 'coco' in test_set:
         if single_scale is True:
-            prototxt = path + 'single_test_deploy.prototxt'
+            prototxt = path + 'deploy.prototxt'
         else:
             prototxt = path + 'multi_test_deploy.prototxt'
         f = open(prototxt, 'r')
@@ -41,8 +37,7 @@ if __name__ == '__main__':
                 cfg.confidence_threshold = float(line.split(' ')[-1])
     else:
         prototxt = path + 'deploy.prototxt'
-    models = os.listdir(path)
-
+    models = ['coco_refinedet_resnet101_512x512_final.caffemodel']
     mAP = {}
     for model in models:
         if model.find('caffemodel') == -1:
